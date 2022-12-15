@@ -38,7 +38,7 @@ def get_data():
      Select SETTLEMENTDATE,LOCALDATE, sum(mwh) as mwh from  xx group by all order by SETTLEMENTDATE desc
       ''').df() 
 results = get_data()
-now = str(results["SETTLEMENTDATE"].column.max())
+now = str(results["SETTLEMENTDATE"].max())
 st.subheader("Latest Updated: " + now)
 
 ############################################################# Visualisation ##############################################################
