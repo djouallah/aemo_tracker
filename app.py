@@ -1,6 +1,7 @@
 import streamlit as st
 import duckdb 
 from timeit import default_timer as timer
+import altair as alt
 
 st.set_page_config(
     page_title="Example of Delta Table and DuckDB",
@@ -29,7 +30,7 @@ def import_data(ttl=5*60):
     set s3_endpoint = '{st.secrets["endpoint_url_secret"].replace("https://", "")}'  ;
     SET s3_url_style='path';
     create or replace table scada as Select SETTLEMENTDATE, (SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE ,
-                      DUID,MIN(SCADAVALUE) as mwh from  parquet_scan('s3://delta/aemo/scada/data/*/*.parquet' , HIVE_PARTITIONING = 1,filename= 1) group by all  ;
+                      DUID,MIN(SCADAVALUE) as mwh from  parquet_scan('s3://delta/aemo/scada/data/*/*.parquet' , HIVE_PARTITIONING = 1,filename= 1) WHERE SCADAVALUE !=0 group by all  ;
     ''')
     return con
 
@@ -39,17 +40,31 @@ end = timer()
 #st.write(round(end - start,2))
 
 ########################################################## Query the Data #####################################
-results= con.execute(''' Select SETTLEMENTDATE,LOCALDATE, sum(mwh) as mwh from  scada group by all order by SETTLEMENTDATE desc''').df() 
+DUID_Select= st.sidebar.multiselect('Select Station', con.execute(''' Select distinct DUID from  scada ''').df() )
+
+xxxx = "','".join(DUID_Select)
+filter =  "'"+xxxx+"'"
+#st.write(filter)
+if len(DUID_Select) != 0 :
+    results= con.execute(f''' Select SETTLEMENTDATE,LOCALDATE,DUID, sum(mwh) as mwh from  scada where DUID in ({filter}) group by all  order by SETTLEMENTDATE  desc ''').df() 
+    c = alt.Chart(results).mark_area().encode( x='LOCALDATE:T', y='mwh:Q',color='DUID:N',
+                                          tooltip=['LOCALDATE','DUID','mwh']).properties(
+                                            
+                                            width=1200,
+                                            height=400)
+else:
+   results= con.execute(''' Select SETTLEMENTDATE,LOCALDATE, sum(mwh) as mwh from  scada group by all order by SETTLEMENTDATE desc''').df()
+   c = alt.Chart(results).mark_area().encode( x='LOCALDATE:T', y='mwh:Q',
+                                          tooltip=['LOCALDATE','mwh']).properties(
+                                            width=1200,
+                                            height=400)
 
 st.subheader("Latest Updated: " + str(results["SETTLEMENTDATE"].max()))
 
 ############################################################# Visualisation ####################################
 #localdate is just a stupid hack, Javascript read datetime as UTC not local time :(
-import altair as alt
-c = alt.Chart(results).mark_area().encode( x='LOCALDATE:T', y='mwh:Q',
-                                          tooltip=['LOCALDATE','mwh']).properties(
-                                            width=1200,
-                                            height=400)
+
+
 st.write(c)
 
 
@@ -61,7 +76,7 @@ def convert_df(df):
      # IMPORTANT: Cache the conversion to prevent computation on every rerun
     return df.to_csv().encode('utf-8')
 
-csv = convert_df(results[['SETTLEMENTDATE','mwh']])
+csv = convert_df(results)
 col2.download_button(
      label="Download data as CSV",
      data=csv,
