@@ -30,7 +30,7 @@ def import_data():
     set s3_endpoint = '{st.secrets["endpoint_url_secret"].replace("https://", "")}'  ;
     SET s3_url_style='path';
     copy( Select SETTLEMENTDATE, (SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE ,
-         DUID,MIN(SCADAVALUE) as mwh from  parquet_scan('s3://delta/aemo/scada/data/*/*.parquet' , HIVE_PARTITIONING = 1,filename= 1)
+         DUID,MIN(SCADAVALUE) as mw from  parquet_scan('s3://delta/aemo/scada/data/*/*.parquet' , HIVE_PARTITIONING = 1,filename= 1)
          WHERE SCADAVALUE !=0 group by all ) to 'data.parquet' (FORMAT 'PARQUET', CODEC 'ZSTD') ;
     create view if not exists scada as select * from parquet_scan('./data.parquet') ;
     ''')
@@ -48,16 +48,16 @@ xxxx = "','".join(DUID_Select)
 filter =  "'"+xxxx+"'"
 #st.write(filter)
 if len(DUID_Select) != 0 :
-    results= con.execute(f''' Select SETTLEMENTDATE,LOCALDATE,DUID, sum(mwh) as mwh from  scada where DUID in ({filter}) group by all  order by SETTLEMENTDATE  desc ''').df() 
-    c = alt.Chart(results).mark_area().encode( x='LOCALDATE:T', y='mwh:Q',color='DUID:N',
-                                          tooltip=['LOCALDATE','DUID','mwh']).properties(
+    results= con.execute(f''' Select SETTLEMENTDATE,LOCALDATE,DUID, sum(mw) as mw from  scada where DUID in ({filter}) group by all  order by SETTLEMENTDATE  desc ''').df() 
+    c = alt.Chart(results).mark_area().encode( x='LOCALDATE:T', y='mw:Q',color='DUID:N',
+                                          tooltip=['LOCALDATE','DUID','mw']).properties(
                                             
                                             width=1200,
                                             height=400)
 else:
-   results= con.execute(''' Select SETTLEMENTDATE,LOCALDATE, sum(mwh) as mwh from  scada group by all order by SETTLEMENTDATE desc''').df()
-   c = alt.Chart(results).mark_area().encode( x='LOCALDATE:T', y='mwh:Q',
-                                          tooltip=['LOCALDATE','mwh']).properties(
+   results= con.execute(''' Select SETTLEMENTDATE,LOCALDATE, sum(mw) as mw from  scada group by all order by SETTLEMENTDATE desc''').df()
+   c = alt.Chart(results).mark_area().encode( x='LOCALDATE:T', y='mw:Q',
+                                          tooltip=['LOCALDATE','mw']).properties(
                                             width=1200,
                                             height=400)
 
