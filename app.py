@@ -32,7 +32,7 @@ def import_data(ttl=5*60):
     copy( Select SETTLEMENTDATE, (SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE ,
          DUID,MIN(SCADAVALUE) as mwh from  parquet_scan('s3://delta/aemo/scada/data/*/*.parquet' , HIVE_PARTITIONING = 1,filename= 1)
          WHERE SCADAVALUE !=0 group by all ) to 'data.parquet' (FORMAT 'PARQUET', CODEC 'ZSTD') ;
-    create view if not exists scada as select * from parquet_scan('data.parquet') ;
+    create view if not exists scada as select * from parquet_scan('./data.parquet') ;
     ''')
     return con
 
