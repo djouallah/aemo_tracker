@@ -69,7 +69,7 @@ col2.download_button(
      mime='text/csv',
  )
 
-del csv,df
+
 link='[Data Source](http://nemweb.com.au/Reports/Current/Dispatch_SCADA/)'
 col1.markdown(link,unsafe_allow_html=True)
 
