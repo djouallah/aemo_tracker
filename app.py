@@ -4,7 +4,7 @@ from timeit import default_timer as timer
 import altair as alt
 
 st.set_page_config(
-    page_title="Example of Delta Table and DuckDB",
+    page_title="Example of Cloudflare R2 and DuckDB",
     page_icon="✅",
     layout="wide",
 )
