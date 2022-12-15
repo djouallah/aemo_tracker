@@ -22,6 +22,7 @@ def import_data():
     con.execute(f'''
     install httpfs;
     LOAD httpfs;
+    PRAGMA enable_object_cache;
     set s3_region = 'auto';
     set s3_access_key_id = "{st.secrets["aws_access_key_id_secret"]}" ;
     set s3_secret_access_key = '{st.secrets["aws_secret_access_key_secret"] }';
