@@ -30,7 +30,7 @@ def import_data():
     SET s3_url_style='path';
     copy( Select SETTLEMENTDATE, (SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE ,
          DUID,MIN(SCADAVALUE) as mw from  parquet_scan('s3://delta/aemo/scada/data/*/*.parquet' , HIVE_PARTITIONING = 1,filename= 1)
-         WHERE SCADAVALUE !=0 group by all ) to 'data.parquet' (FORMAT 'PARQUET', CODEC 'ZSTD') ;
+         group by all ) to 'data.parquet' (FORMAT 'PARQUET', CODEC 'ZSTD') ;
     create view if not exists scada as select * from parquet_scan('./data.parquet') ;
     ''')
     return con
@@ -41,7 +41,7 @@ end = timer()
 #st.write(round(end - start,2))
 
 ########################################################## Query the Data #####################################
-DUID_Select= st.sidebar.multiselect('Select Station', con.execute(''' Select distinct DUID from  scada ''').df() )
+DUID_Select= st.sidebar.multiselect('Select Station', con.execute(''' Select distinct DUID from  scada WHERE SCADAVALUE !=0 ''').df() )
 
 xxxx = "','".join(DUID_Select)
 filter =  "'"+xxxx+"'"
@@ -49,14 +49,14 @@ filter =  "'"+xxxx+"'"
 if len(DUID_Select) != 0 :
     results= con.execute(f''' Select SETTLEMENTDATE,LOCALDATE,DUID, sum(mw) as mw from  scada where DUID in ({filter}) group by all  order by SETTLEMENTDATE  desc ''').df() 
     c = alt.Chart(results).mark_area().encode( x='LOCALDATE:T', y='mw:Q',color='DUID:N',
-                                          tooltip=['LOCALDATE','DUID','mw']).properties(
+                                          tooltip=['SETTLEMENTDATE','DUID','mw']).properties(
                                             
                                             width=1200,
                                             height=400)
 else:
    results= con.execute(''' Select SETTLEMENTDATE,LOCALDATE, sum(mw) as mw from  scada group by all order by SETTLEMENTDATE desc''').df()
    c = alt.Chart(results).mark_area().encode( x='LOCALDATE:T', y='mw:Q',
-                                          tooltip=['LOCALDATE','mw']).properties(
+                                          tooltip=['SETTLEMENTDATE','mw']).properties(
                                             width=1200,
                                             height=400)
 
