@@ -32,12 +32,12 @@ def define_view():
     return con
 con=define_view()
 @st.experimental_memo (ttl=5*60)
-def get_data(SQL):
+def get_data():
   return con.execute('''
      with xx as (Select SETTLEMENTDATE, (SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE , DUID,MIN(SCADAVALUE) as mwh from  scada group by all)
      Select SETTLEMENTDATE,LOCALDATE, sum(mwh) as mwh from  xx group by all order by SETTLEMENTDATE desc
       ''').df() 
-results = get_data(SQL)
+results = get_data()
 column = results["SETTLEMENTDATE"]
 now = str (column.max())
 st.subheader("Latest Updated: " + now)
