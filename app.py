@@ -16,7 +16,7 @@ col1, col2 = st.columns([1, 1])
 ########################################################## import Data from R2##############################
 @st.experimental_singleton
 def import_data(ttl=5*60):
-    con=duckdb.connect()
+    con=duckdb.connect('db')
     con.execute(f'''
     install httpfs;
     LOAD httpfs;
@@ -27,7 +27,7 @@ def import_data(ttl=5*60):
     set s3_secret_access_key = '{st.secrets["aws_secret_access_key_secret"] }';
     set s3_endpoint = '{st.secrets["endpoint_url_secret"].replace("https://", "")}'  ;
     SET s3_url_style='path';
-    create or replace temp table scada as Select SETTLEMENTDATE, (SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE ,
+    create or replace table scada as Select SETTLEMENTDATE, (SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE ,
                       DUID,MIN(SCADAVALUE) as mwh from  parquet_scan('s3://delta/aemo/scada/data/*/*.parquet' , HIVE_PARTITIONING = 1,filename= 1) group by all  ;
     ''')
     return con
