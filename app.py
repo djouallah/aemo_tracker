@@ -61,7 +61,7 @@ st.subheader("Latest Updated: " + str(results["SETTLEMENTDATE"].max()))
 #localdate is just a stupid hack, Javascript read datetime as UTC not local time :(
 
 st.write(c)
-
+del c
 ###########################################################Buttons and Links ####################################
 #Download Button
 
@@ -77,6 +77,7 @@ col2.download_button(
      file_name='large_df.csv',
      mime='text/csv',
  )
+del results
 
 
 link='[Data Source](http://nemweb.com.au/Reports/Current/Dispatch_SCADA/)'
