@@ -16,13 +16,13 @@ col1, col2 = st.columns([1, 1])
 
 ########################################################## import Data from R2##############################
 @st.experimental_singleton
-def import_data():
+def import_data(ttl=10*60):
     con=duckdb.connect('db')
     con.execute(f'''
     install httpfs;
     LOAD httpfs;
-    --SET enable_http_metadata_cache=true ;
-    --PRAGMA enable_object_cache ;
+    SET enable_http_metadata_cache=true ;
+    PRAGMA enable_object_cache ;
     set s3_region = 'auto';
     set s3_access_key_id = "{st.secrets["aws_access_key_id_secret"]}" ;
     set s3_secret_access_key = '{st.secrets["aws_secret_access_key_secret"] }';
