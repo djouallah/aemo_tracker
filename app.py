@@ -1,5 +1,6 @@
 import streamlit as st
 import duckdb 
+from timeit import default_timer as timer
 
 st.set_page_config(
     page_title="Example of Delta Table and DuckDB",
@@ -32,9 +33,12 @@ def import_data(ttl=5*60):
     ''')
     return con
 
-########################################################## Query the Data #####################################
+start = timer()
 con=import_data()
+end = timer()
+st.write(round(end - start,2))
 
+########################################################## Query the Data #####################################
 results= con.execute(''' Select SETTLEMENTDATE,LOCALDATE, sum(mwh) as mwh from  scada group by all order by SETTLEMENTDATE desc''').df() 
 
 st.subheader("Latest Updated: " + str(results["SETTLEMENTDATE"].max()))
