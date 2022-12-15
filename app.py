@@ -29,7 +29,7 @@ def import_data():
     SET s3_url_style='path';
     create or replace table scada as Select SETTLEMENTDATE, (SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE ,
          DUID,MIN(SCADAVALUE) as mw from  parquet_scan('s3://delta/aemo/scada/data/*/*.parquet' , HIVE_PARTITIONING = 1,filename= 1)
-         group by all
+         group by all order by DUID,SETTLEMENTDATE
     ''')
     return con
 
