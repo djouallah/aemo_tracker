@@ -16,7 +16,7 @@ col1, col2 = st.columns([1, 1])
 
 ########################################################## import Data from R2##############################
 @st.experimental_singleton
-def import_data(ttl=5*60):
+def import_data():
     con=duckdb.connect('db')
     con.execute(f'''
     install httpfs;
