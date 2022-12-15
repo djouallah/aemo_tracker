@@ -36,7 +36,7 @@ def import_data():
     end = timer()
     dur = round(end - start,2)
     if dur >1 :
-    st.write("import Duration " + str(dur))
+        st.write("import Duration " + str(dur))
     return con
 
 con=import_data()
