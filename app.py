@@ -1,5 +1,4 @@
 import streamlit as st
-from streamlit_autorefresh import st_autorefresh
 import duckdb 
 
 st.set_page_config(
@@ -7,10 +6,10 @@ st.set_page_config(
     page_icon="✅",
     layout="wide",
 )
-st_autorefresh(interval=4 * 60 * 1000, key="dataframerefresh")                     
+                   
 
 # dashboard title
-st.title("Example of Cloudflare R2 and DuckDB, Auto refresh every 5 minutes")
+st.title("Example of Cloudflare R2 and DuckDB")
 
 col1, col2 = st.columns([1, 1])
 
@@ -32,10 +31,13 @@ def define_view():
     ''')
     return con
 con=define_view()
-results =con.execute('''
+@st.experimental_memo (ttl=5*60)
+def get_data(SQL):
+  return con.execute('''
      with xx as (Select SETTLEMENTDATE, (SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE , DUID,MIN(SCADAVALUE) as mwh from  scada group by all)
      Select SETTLEMENTDATE,LOCALDATE, sum(mwh) as mwh from  xx group by all order by SETTLEMENTDATE desc
       ''').df() 
+results = get_data(SQL)
 column = results["SETTLEMENTDATE"]
 now = str (column.max())
 st.subheader("Latest Updated: " + now)
