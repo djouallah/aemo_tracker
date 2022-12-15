@@ -49,14 +49,14 @@ filter =  "'"+xxxx+"'"
 if len(DUID_Select) != 0 :
     results= con.execute(f''' Select SETTLEMENTDATE,LOCALDATE,DUID, sum(mw) as mw from  scada where DUID in ({filter}) group by all  order by SETTLEMENTDATE  desc ''').df() 
     c = alt.Chart(results).mark_area().encode( x='LOCALDATE:T', y='mw:Q',color='DUID:N',
-                                          tooltip=['SETTLEMENTDATE','DUID','mw']).properties(
+                                          tooltip=['LOCALDATE','DUID','mw']).properties(
                                             
                                             width=1200,
                                             height=400)
 else:
    results= con.execute(''' Select SETTLEMENTDATE,LOCALDATE, sum(mw) as mw from  scada group by all order by SETTLEMENTDATE desc''').df()
    c = alt.Chart(results).mark_area().encode( x='LOCALDATE:T', y='mw:Q',
-                                          tooltip=['SETTLEMENTDATE','mw']).properties(
+                                          tooltip=['LOCALDATE','mw']).properties(
                                             width=1200,
                                             height=400)
 
