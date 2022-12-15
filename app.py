@@ -16,8 +16,8 @@ st.title("Example of Cloudflare R2 and DuckDB")
 col1, col2 = st.columns([1, 1])
 
 ########################################################## import Data from R2##############################
-@st.experimental_singleton
-def import_data(ttl=5*60):
+@st.experimental_singleton(ttl=5*60)
+def import_data():
     con=duckdb.connect()
     con.execute(f'''
     install httpfs;
