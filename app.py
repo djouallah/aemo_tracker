@@ -1,6 +1,5 @@
 import streamlit as st
 import duckdb 
-from timeit import default_timer as timer
 import altair as alt
 
 st.set_page_config(
@@ -60,9 +59,7 @@ st.subheader("Latest Updated: " + str(results["SETTLEMENTDATE"].max()))
 ############################################################# Visualisation ####################################
 #localdate is just a stupid hack, Javascript read datetime as UTC not local time :(
 
-
 st.write(c)
-
 
 ###########################################################Buttons and Links ####################################
 #Download Button
