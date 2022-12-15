@@ -37,7 +37,9 @@ def import_data():
 start = timer()
 con=import_data()
 end = timer()
-#st.write(round(end - start,2))
+dur = round(end - start,2)
+if dur >1 :
+  st.write("import Duration " + str(dur))
 
 ########################################################## Query the Data #####################################
 DUID_Select= st.sidebar.multiselect('Select Station', con.execute(''' Select distinct DUID from  scada WHERE mw !=0 ''').df() )
@@ -68,7 +70,7 @@ st.subheader("Latest Updated: " + str(results["SETTLEMENTDATE"].max()))
 st.write(c)
 
 
-###########################################################Buttons and Links #############################################################
+###########################################################Buttons and Links ####################################
 #Download Button
 
 
