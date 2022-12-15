@@ -21,13 +21,13 @@ def import_data(ttl=5*60):
     install httpfs;
     LOAD httpfs;
     --SET enable_http_metadata_cache=true ;
-    PRAGMA enable_object_cache ;
+    --PRAGMA enable_object_cache ;
     set s3_region = 'auto';
     set s3_access_key_id = "{st.secrets["aws_access_key_id_secret"]}" ;
     set s3_secret_access_key = '{st.secrets["aws_secret_access_key_secret"] }';
     set s3_endpoint = '{st.secrets["endpoint_url_secret"].replace("https://", "")}'  ;
     SET s3_url_style='path';
-    create or replace table scada as Select SETTLEMENTDATE, (SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE ,
+    create or replace temp table scada as Select SETTLEMENTDATE, (SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE ,
                       DUID,MIN(SCADAVALUE) as mwh from  parquet_scan('s3://delta/aemo/scada/data/*/*.parquet' , HIVE_PARTITIONING = 1,filename= 1) group by all  ;
     ''')
     return con
