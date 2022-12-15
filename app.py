@@ -38,8 +38,7 @@ def get_data():
      Select SETTLEMENTDATE,LOCALDATE, sum(mwh) as mwh from  xx group by all order by SETTLEMENTDATE desc
       ''').df() 
 results = get_data()
-column = results["SETTLEMENTDATE"]
-now = str (column.max())
+now = str(results["SETTLEMENTDATE"].column.max())
 st.subheader("Latest Updated: " + now)
 
 ############################################################# Visualisation ##############################################################
@@ -50,7 +49,7 @@ c = alt.Chart(results).mark_area().encode( x='LOCALDATE:T', y='mwh:Q',
                                             width=1200,
                                             height=400)
 st.write(c)
-df=results[['SETTLEMENTDATE','mwh']]
+#df=results[['SETTLEMENTDATE','mwh']]
 #st.dataframe(df)
 
 ###########################################################Buttons and Links #############################################################
@@ -61,7 +60,7 @@ def convert_df(df):
      # IMPORTANT: Cache the conversion to prevent computation on every rerun
     return df.to_csv().encode('utf-8')
 
-csv = convert_df(df)
+csv = convert_df(results)
 col2.download_button(
      label="Download data as CSV",
      data=csv,
