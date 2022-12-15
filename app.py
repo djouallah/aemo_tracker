@@ -16,7 +16,7 @@ col1, col2 = st.columns([1, 1])
 
 ########################################################## import Data from R2##############################
 @st.experimental_singleton
-def import_data(ttl=10*60):
+def import_data(ttl=5*60):
     con=duckdb.connect('db')
     con.execute(f'''
     install httpfs;
@@ -36,7 +36,7 @@ def import_data(ttl=10*60):
 start = timer()
 con=import_data()
 end = timer()
-st.write(round(end - start,2))
+#st.write(round(end - start,2))
 
 ########################################################## Query the Data #####################################
 results= con.execute(''' Select SETTLEMENTDATE,LOCALDATE, sum(mwh) as mwh from  scada group by all order by SETTLEMENTDATE desc''').df() 
