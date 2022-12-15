@@ -18,7 +18,6 @@ col1, col2 = st.columns([1, 1])
 ########################################################## import Data from R2##############################
 @st.experimental_singleton(ttl=5*60)
 def import_data():
-    start = timer()
     con=duckdb.connect()
     con.execute(f'''
     install httpfs;
@@ -33,10 +32,6 @@ def import_data():
          DUID,MIN(SCADAVALUE) as mw from  parquet_scan('s3://delta/aemo/scada/data/*/*.parquet' , HIVE_PARTITIONING = 1,filename= 1)
          group by all
     ''')
-    end = timer()
-    dur = round(end - start,2)
-    if dur >1 :
-        st.write("import Duration " + str(dur))
     return con
 
 con=import_data()
