@@ -35,7 +35,8 @@ def import_data():
 
 con=import_data()
 ########################################################## Query the Data #####################################
-DUID_Select= st.sidebar.multiselect('Select Station', con.execute(''' Select distinct DUID from  scada WHERE mw !=0 ''').df() )
+DUID=con.execute(''' Select distinct DUID from  scada WHERE mw !=0 ''').df()
+DUID_Select= st.sidebar.multiselect('Select Station', DUID )
 
 xxxx = "','".join(DUID_Select)
 filter =  "'"+xxxx+"'"
