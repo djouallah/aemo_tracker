@@ -28,10 +28,9 @@ def import_data():
     set s3_secret_access_key = '{st.secrets["aws_secret_access_key_secret"] }';
     set s3_endpoint = '{st.secrets["endpoint_url_secret"].replace("https://", "")}'  ;
     SET s3_url_style='path';
-    copy( Select SETTLEMENTDATE, (SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE ,
+    create or replace table scada as Select SETTLEMENTDATE, (SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE ,
          DUID,MIN(SCADAVALUE) as mw from  parquet_scan('s3://delta/aemo/scada/data/*/*.parquet' , HIVE_PARTITIONING = 1,filename= 1)
-         group by all ) to 'data.parquet' (FORMAT 'PARQUET', CODEC 'ZSTD') ;
-    create view if not exists scada as select * from parquet_scan('./data.parquet') ;
+         group by all
     ''')
     return con
 
