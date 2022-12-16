@@ -32,7 +32,7 @@ def import_data():
     set s3_endpoint = '{st.secrets["endpoint_url_secret"].replace("https://", "")}'  ;
     SET s3_url_style='path';
     create or replace table scada as Select SETTLEMENTDATE, (SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE ,
-         DUID,MIN(SCADAVALUE) as mw from  parquet_scan('s3://delta/aemo/scada/data/*/*.parquet' , HIVE_PARTITIONING = 1) where Date >= '{cut_off}'
+         DUID,MIN(SCADAVALUE) as mw from  parquet_scan('s3://delta/aemo/scada/data/Date=2022-12-16/*.parquet' , HIVE_PARTITIONING = 1)
          group by all order by DUID,SETTLEMENTDATE
     ''')
     return con
