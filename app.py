@@ -1,6 +1,8 @@
 import streamlit as st
 import duckdb 
 import altair as alt
+from datetime import datetime, timedelta
+
 
 st.set_page_config(
     page_title="Example of Cloudflare R2 and DuckDB",
@@ -17,6 +19,7 @@ col1, col2 = st.columns([1, 1])
 ########################################################## import Data from R2##############################
 @st.experimental_singleton(ttl=10*60)
 def import_data():
+    cut_off =datetime.strftime(datetime.now() - timedelta(1), '%Y-%m-%d')
     con=duckdb.connect()
     con.execute(f'''
     install httpfs;
@@ -28,7 +31,7 @@ def import_data():
     set s3_endpoint = '{st.secrets["endpoint_url_secret"].replace("https://", "")}'  ;
     SET s3_url_style='path';
     create or replace table scada as Select SETTLEMENTDATE, (SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE ,
-         DUID,MIN(SCADAVALUE) as mw from  parquet_scan('s3://delta/aemo/scada/data/*/*.parquet' , HIVE_PARTITIONING = 1,filename= 1)
+         DUID,MIN(SCADAVALUE) as mw from  parquet_scan('s3://delta/aemo/scada/data/*/*.parquet' , HIVE_PARTITIONING = 1) where Date >= '{cut_off}'
          group by all order by DUID,SETTLEMENTDATE
     ''')
     return con
