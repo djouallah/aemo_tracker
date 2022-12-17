@@ -85,7 +85,7 @@ finally :
         set s3_secret_access_key = '{st.secrets["aws_secret_access_key_secret"] }';
         set s3_endpoint = '{st.secrets["endpoint_url_secret"].replace("https://", "")}'  ;
         SET s3_url_style='path';
-        DROP TABLE scada;
+        DROP TABLE IF EXISTS scada;
         create or replace table scada as Select SETTLEMENTDATE, (SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE ,
             DUID,MIN(SCADAVALUE) as mw from  parquet_scan('s3://delta/aemo/scada/data/Date={cut_off}/*.parquet' , HIVE_PARTITIONING = 1)
             group by all order by DUID,SETTLEMENTDATE
