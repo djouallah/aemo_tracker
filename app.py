@@ -19,7 +19,7 @@ col1, col2 = st.columns([1, 1])
 
 try :
     ########################################################## Query the Data #####################################
-    con=duckdb.connect('db')
+    con=duckdb.connect('db',read_only=True)
     DUID_Select= st.sidebar.multiselect('Select Station', con.execute(''' Select distinct DUID from  scada WHERE mw !=0 order by DUID ''').df() )
 
     xxxx = "','".join(DUID_Select)
@@ -62,7 +62,7 @@ try :
         mime='text/csv',
     )
     del results
-
+    con.close()
 
     link='[Data Source](http://nemweb.com.au/Reports/Current/Dispatch_SCADA/)'
     col1.markdown(link,unsafe_allow_html=True)
@@ -74,7 +74,7 @@ finally :
     @st.experimental_singleton(ttl=5*60)
     def import_data():
         cut_off=datetime.strftime(datetime.now(pytz.timezone('Australia/Brisbane')), '%Y-%m-%d')
-        
+        con=duckdb.connect('db')
         con.execute(f'''
         install httpfs;
         LOAD httpfs;
@@ -85,10 +85,9 @@ finally :
         set s3_secret_access_key = '{st.secrets["aws_secret_access_key_secret"] }';
         set s3_endpoint = '{st.secrets["endpoint_url_secret"].replace("https://", "")}'  ;
         SET s3_url_style='path';
-        DROP TABLE IF EXISTS scada;
         create or replace table scada as Select SETTLEMENTDATE, (SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE ,
             DUID,MIN(SCADAVALUE) as mw from  parquet_scan('s3://delta/aemo/scada/data/Date={cut_off}/*.parquet' , HIVE_PARTITIONING = 1)
             group by all order by DUID,SETTLEMENTDATE
         ''')
-
+        con.close()
     import_data()
