@@ -23,7 +23,7 @@ def import_data():
     cut_off=datetime.strftime(datetime.now(pytz.timezone('Australia/Brisbane')), '%Y-%m-%d')
     #Date={cut_off}
     con=duckdb.connect()
-    con.execute(f'''
+    con.execute(f"""
     install httpfs;
     LOAD httpfs;
     PRAGMA enable_object_cache;
@@ -33,30 +33,34 @@ def import_data():
     set s3_secret_access_key = '{st.secrets["aws_secret_access_key_secret"] }';
     set s3_endpoint = '{st.secrets["endpoint_url_secret"].replace("https://", "")}'  ;
     SET s3_url_style='path';
+    create or replace view station as Select DUID,min(Region) as Region,	min(FuelSourceDescriptor) as FuelSourceDescriptor ,
+                                   min(stationame) as stationame, min(DispatchType) as DispatchType from  parquet_scan('s3://delta/aemo/duid/duid.parquet' ) group by all ;
     create or replace table scada as Select SETTLEMENTDATE, (SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE ,
-         DUID,MIN(SCADAVALUE) as mw from  parquet_scan('s3://delta/aemo/scada/data/*/*.parquet' , HIVE_PARTITIONING = 1)
-         group by all order by DUID,SETTLEMENTDATE
-    ''')
+         xx.DUID,Region,FuelSourceDescriptor, replace(stationame, '''', '') as stationame,MIN(SCADAVALUE) as mw from  parquet_scan('s3://delta/aemo/scada/data/*/*.parquet' , HIVE_PARTITIONING = 1) as xx
+         inner join station
+         on xx.DUID = station.DUID
+         group by all order by xx.DUID,SETTLEMENTDATE
+    """)
     return con
 
 con=import_data()
 ########################################################## Query the Data #####################################
-DUID_Select= st.sidebar.multiselect('Select Station', con.execute(''' Select distinct DUID from  scada WHERE mw !=0 order by DUID ''').df() )
+DUID_Select= st.sidebar.multiselect('Select Station', con.execute(''' Select distinct stationame from  scada WHERE mw !=0 order by stationame ''').df() )
 
 xxxx = "','".join(DUID_Select)
 filter =  "'"+xxxx+"'"
 #st.write(filter)
 if len(DUID_Select) != 0 :
-    results= con.execute(f''' Select SETTLEMENTDATE,LOCALDATE,DUID, sum(mw) as mw from  scada where DUID in ({filter}) group by all  order by SETTLEMENTDATE  desc ''').df() 
-    c = alt.Chart(results).mark_area().encode( x='LOCALDATE:T', y='mw:Q',color='DUID:N',
-                                          tooltip=['LOCALDATE','DUID','mw']).properties(
+    results= con.execute(f''' Select SETTLEMENTDATE,LOCALDATE,stationame, sum(mw) as mw from  scada where stationame in ({filter}) group by all  order by SETTLEMENTDATE  desc ''').df() 
+    c = alt.Chart(results).mark_area().encode( x='LOCALDATE:T', y='mw:Q',color='stationame:N',
+                                          tooltip=['LOCALDATE','stationame','mw']).properties(
                                             
                                             width=1200,
                                             height=400)
 else:
-   results= con.execute(''' Select SETTLEMENTDATE,LOCALDATE, sum(mw) as mw from  scada group by all order by SETTLEMENTDATE desc''').df()
-   c = alt.Chart(results).mark_area().encode( x='LOCALDATE:T', y='mw:Q',
-                                          tooltip=['LOCALDATE','mw']).properties(
+   results= con.execute(''' Select SETTLEMENTDATE,LOCALDATE,FuelSourceDescriptor, sum(mw) as mw from  scada group by all order by SETTLEMENTDATE desc''').df()
+   c = alt.Chart(results).mark_area().encode( x='LOCALDATE:T', y='mw:Q',color='FuelSourceDescriptor:N',
+                                          tooltip=['LOCALDATE','FuelSourceDescriptor','mw']).properties(
                                             width=1200,
                                             height=400)
 
