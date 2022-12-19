@@ -19,7 +19,7 @@ col1, col2 = st.columns([1, 1])
 
 
 ########################################################## Query the Data #####################################
-con=duckdb.connect('db')
+con=duckdb.connect()
 con.execute(''' create table if not exists  scada (LOCALDATE date ) ''')
 new=con.execute(''' select LOCALDATE from scada limit 3 ''').df()
 if len(new) >= 1 :
@@ -77,7 +77,6 @@ if len(new) >= 1 :
 def import_data():
     cut_off=datetime.strftime(datetime.now(pytz.timezone('Australia/Brisbane')), '%Y-%m-%d')
     #Date={cut_off}
-
     con.execute(f"""
     install httpfs;
     LOAD httpfs;
