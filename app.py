@@ -17,12 +17,67 @@ st.title("Example of Cloudflare R2 and DuckDB")
 
 col1, col2 = st.columns([1, 1])
 
+
+########################################################## Query the Data #####################################
+con=duckdb.connect('db')
+con.execute(''' create table if not exists  scada (LOCALDATE date ) ''')
+new=con.execute(''' select LOCALDATE from scada limit 3 ''').df()
+if len(new) >= 1 :
+    DUID_Select= st.sidebar.multiselect('Select Station', con.execute(''' Select distinct stationame from  scada WHERE mw !=0 order by stationame ''').df() )
+
+    xxxx = "','".join(DUID_Select)
+    filter =  "'"+xxxx+"'"
+    #st.write(filter)
+    if len(DUID_Select) != 0 :
+        results= con.execute(f''' Select SETTLEMENTDATE,LOCALDATE,stationame, sum(mw) as mw from  scada where stationame in ({filter}) group by all  order by SETTLEMENTDATE  desc ''').df() 
+        c = alt.Chart(results).mark_area().encode( x='LOCALDATE:T', y='mw:Q',color='stationame:N',
+                                            tooltip=['LOCALDATE','stationame','mw']).properties(
+                                                
+                                                width=1200,
+                                                height=400)
+    else:
+        results= con.execute(''' Select SETTLEMENTDATE,LOCALDATE,FuelSourceDescriptor, sum(mw) as mw from  scada group by all order by SETTLEMENTDATE desc''').df()
+        c = alt.Chart(results).mark_area().encode( x='LOCALDATE:T', y='mw:Q',color='FuelSourceDescriptor:N',
+                                                tooltip=['LOCALDATE','FuelSourceDescriptor','mw']).properties(
+                                                    width=1200,
+                                                    height=400)
+
+    st.subheader("Latest Updated: " + str(results["SETTLEMENTDATE"].max()))
+
+    ############################################################# Visualisation ####################################
+    #localdate is just a stupid hack, Javascript read datetime as UTC not local time :(
+
+    st.write(c)
+    del c
+    ###########################################################Buttons and Links ####################################
+    #Download Button
+
+
+    def convert_df(df):
+        # IMPORTANT: Cache the conversion to prevent computation on every rerun
+        return df.to_csv().encode('utf-8')
+
+    csv = convert_df(results)
+    col2.download_button(
+        label="Download data as CSV",
+        data=csv,
+        file_name='large_df.csv',
+        mime='text/csv',
+    )
+    del results
+
+
+    link='[Data Source](http://nemweb.com.au/Reports/Current/Dispatch_SCADA/)'
+    col1.markdown(link,unsafe_allow_html=True)
+
+    link='[Blog](https://datamonkeysite.com/2022/06/28/using-delta-lake-with-python/)'
+    col1.markdown(link,unsafe_allow_html=True)
 ########################################################## import Data from R2##############################
 @st.experimental_singleton(ttl=5*60)
 def import_data():
     cut_off=datetime.strftime(datetime.now(pytz.timezone('Australia/Brisbane')), '%Y-%m-%d')
     #Date={cut_off}
-    con=duckdb.connect()
+
     con.execute(f"""
     install httpfs;
     LOAD httpfs;
@@ -41,56 +96,6 @@ def import_data():
          on xx.DUID = station.DUID
          group by all order by xx.DUID,SETTLEMENTDATE
     """)
-    return con
+    return "done"
 
-con=import_data()
-########################################################## Query the Data #####################################
-DUID_Select= st.sidebar.multiselect('Select Station', con.execute(''' Select distinct stationame from  scada WHERE mw !=0 order by stationame ''').df() )
-
-xxxx = "','".join(DUID_Select)
-filter =  "'"+xxxx+"'"
-#st.write(filter)
-if len(DUID_Select) != 0 :
-    results= con.execute(f''' Select SETTLEMENTDATE,LOCALDATE,stationame, sum(mw) as mw from  scada where stationame in ({filter}) group by all  order by SETTLEMENTDATE  desc ''').df() 
-    c = alt.Chart(results).mark_area().encode( x='LOCALDATE:T', y='mw:Q',color='stationame:N',
-                                          tooltip=['LOCALDATE','stationame','mw']).properties(
-                                            
-                                            width=1200,
-                                            height=400)
-else:
-   results= con.execute(''' Select SETTLEMENTDATE,LOCALDATE,FuelSourceDescriptor, sum(mw) as mw from  scada group by all order by SETTLEMENTDATE desc''').df()
-   c = alt.Chart(results).mark_area().encode( x='LOCALDATE:T', y='mw:Q',color='FuelSourceDescriptor:N',
-                                          tooltip=['LOCALDATE','FuelSourceDescriptor','mw']).properties(
-                                            width=1200,
-                                            height=400)
-
-st.subheader("Latest Updated: " + str(results["SETTLEMENTDATE"].max()))
-
-############################################################# Visualisation ####################################
-#localdate is just a stupid hack, Javascript read datetime as UTC not local time :(
-
-st.write(c)
-del c
-###########################################################Buttons and Links ####################################
-#Download Button
-
-
-def convert_df(df):
-     # IMPORTANT: Cache the conversion to prevent computation on every rerun
-    return df.to_csv().encode('utf-8')
-
-csv = convert_df(results)
-col2.download_button(
-     label="Download data as CSV",
-     data=csv,
-     file_name='large_df.csv',
-     mime='text/csv',
- )
-del results
-
-
-link='[Data Source](http://nemweb.com.au/Reports/Current/Dispatch_SCADA/)'
-col1.markdown(link,unsafe_allow_html=True)
-
-link='[Blog](https://datamonkeysite.com/2022/06/28/using-delta-lake-with-python/)'
-col1.markdown(link,unsafe_allow_html=True)
+import_data()
