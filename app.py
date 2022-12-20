@@ -22,7 +22,7 @@ table_path = "./xxx"
 ########################################################## Query the Data #####################################
 con=duckdb.connect()
 try :
-    scada =  ds.dataset(table_path).to_table()
+    scada =  ds.dataset(table_path)
     DUID_Select= st.sidebar.multiselect('Select Station', con.execute(''' Select distinct stationame from  scada WHERE mw !=0 order by stationame ''').df() )
 
     xxxx = "','".join(DUID_Select)
