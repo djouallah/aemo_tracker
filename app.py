@@ -101,5 +101,6 @@ def import_data(table_path):
          group by all order by xx.DUID,SETTLEMENTDATE
     """).arrow()
     ds.write_dataset(tb,table_path, format="parquet",existing_data_behavior="overwrite_or_ignore")
+    del tb
     
 import_data(table_path )
