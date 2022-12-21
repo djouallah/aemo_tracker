@@ -14,7 +14,7 @@ st.set_page_config(
                    
 
 # dashboard title
-st.title("Australian Electricity Market")
+st.title("Australian Electricity Market, POC using only Phython, Cloudflare R2, DuckDB and Streamlit")
 
 col1, col2 = st.columns([1, 1])
 
