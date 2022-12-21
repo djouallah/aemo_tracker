@@ -7,7 +7,7 @@ import pyarrow.dataset as ds
 
 
 st.set_page_config(
-    page_title="Australian Electricity Market",
+    page_title="Australian Electricity Market, only a POC how to build a full data pipeline using Only Python from Ingestion to Viz",
     page_icon="✅",
     layout="wide",
 )
