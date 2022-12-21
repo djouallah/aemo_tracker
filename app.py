@@ -66,10 +66,10 @@ try :
     del results
 
 
-    link='[Data Source](http://nemweb.com.au/Reports/Current/Dispatch_SCADA/)'
+    link='[for a Full experience go to Nemtracker Dashboard](https://datastudio.google.com/reporting/1Fah7mn1X9itiFAMIvCFkj_tEYXHdxAll/page/TyK1)'
     col1.markdown(link,unsafe_allow_html=True)
 
-    link='[Blog](https://datamonkeysite.com/2022/06/28/using-delta-lake-with-python/)'
+    link='[Source code](https://github.com/djouallah/aemo_tracker/blob/main/app.py)'
     col1.markdown(link,unsafe_allow_html=True)
 except:
     st.write('first run will take time')
