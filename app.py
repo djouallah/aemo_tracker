@@ -7,14 +7,14 @@ import pyarrow.dataset as ds
 
 
 st.set_page_config(
-    page_title="Example of Cloudflare R2 and DuckDB",
+    page_title="Australian Electricity Market",
     page_icon="✅",
     layout="wide",
 )
                    
 
 # dashboard title
-st.title("Example of Cloudflare R2 and DuckDB")
+st.title("Australian Electricity Market")
 
 col1, col2 = st.columns([1, 1])
 
