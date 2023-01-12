@@ -89,7 +89,7 @@ def import_data(table_path):
     set s3_secret_access_key = '{st.secrets["aws_secret_access_key_secret"] }';
     set s3_endpoint = '{st.secrets["endpoint_url_secret"].replace("https://", "")}'  ;
     SET s3_url_style='path';
-    create or replace view station as Select DUID,min(Region) as Region,	min(FuelSourceDescriptor) as FuelSourceDescriptor ,
+    create or replace table station as Select DUID,min(Region) as Region,	min(FuelSourceDescriptor) as FuelSourceDescriptor ,
                                    min(stationame) as stationame, min(DispatchType) as DispatchType from  parquet_scan('s3://delta/aemo/duid/duid.parquet' ) group by all ;
     
     """)
