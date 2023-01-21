@@ -74,7 +74,7 @@ try :
 except:
     st.write('first run will take time')
 ########################################################## import Data from R2##############################
-@st.experimental_singleton(ttl=24*60*60)
+@st.experimental_singleton(ttl=30*60)
 def import_data(table_path):
     cut_off=datetime.strftime(datetime.now(pytz.timezone('Australia/Brisbane')), '%Y-%m-%d')
     #Date={cut_off}
