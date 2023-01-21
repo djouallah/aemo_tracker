@@ -95,10 +95,12 @@ def import_data(table_path):
     """)
     tb=con.execute(f"""
     Select SETTLEMENTDATE, (SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE ,
-         xx.DUID,Region,FuelSourceDescriptor, replace(stationame, '''', '') as stationame,MIN(SCADAVALUE) as mw from  parquet_scan('s3://delta/aemo/scada/data/*/*.parquet' , HIVE_PARTITIONING = 1) where Date = '{cut_off}' as xx
+         xx.DUID,Region,FuelSourceDescriptor, replace(stationame, '''', '') as stationame,MIN(SCADAVALUE) as mw
+         from  parquet_scan('s3://delta/aemo/scada/data/Date={cut_off}/*.parquet' , HIVE_PARTITIONING = 1)  as xx
          inner join station
          on xx.DUID = station.DUID
          group by all order by xx.DUID,SETTLEMENTDATE
+         
     """).arrow()
     ds.write_dataset(tb,table_path, format="parquet",existing_data_behavior="overwrite_or_ignore")
     del tb
