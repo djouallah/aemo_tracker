@@ -90,13 +90,14 @@ def import_data(table_path):
     set s3_endpoint = '{st.secrets["endpoint_url_secret"].replace("https://", "")}'  ;
     SET s3_url_style='path';
     create or replace table station as Select DUID,min(Region) as Region,	min(FuelSourceDescriptor) as FuelSourceDescriptor ,
-                                   min(stationame) as stationame, min(DispatchType) as DispatchType from  parquet_scan('s3://delta/aemo/duid/duid.parquet' ) group by all ;
+                                   min(stationame) as stationame, min(DispatchType) as DispatchType
+                                   from  parquet_scan('s3://aemo/aemo/duid/duid.parquet' ) group by all ;
     
     """)
     tb=con.execute(f"""
     Select SETTLEMENTDATE, (SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE ,
          xx.DUID,Region,FuelSourceDescriptor, replace(stationame, '''', '') as stationame,MIN(SCADAVALUE) as mw
-         from  parquet_scan('s3://delta/aemo/scada/data/Date={cut_off}/*.parquet' , HIVE_PARTITIONING = 1)  as xx
+         from  parquet_scan('s3://aemo/aemo/scada/data/Date={cut_off}/*.parquet' , HIVE_PARTITIONING = 1)  as xx
          inner join station
          on xx.DUID = station.DUID
          group by all order by xx.DUID,SETTLEMENTDATE
