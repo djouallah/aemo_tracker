@@ -79,7 +79,7 @@ try :
         # IMPORTANT: Cache the conversion to prevent computation on every rerun
         return df.to_csv().encode('utf-8')
 
-    csv = convert_df(results['SETTLEMENTDATE','stationame','mv'])
+    csv = convert_df(results[['SETTLEMENTDATE','stationame','mv']])
     col2.download_button(
         label="Download data as CSV",
         data=csv,
