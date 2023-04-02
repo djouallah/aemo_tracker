@@ -3,7 +3,7 @@ import duckdb
 import altair as alt
 import s3fs
 from fsspec.implementations.cached import WholeFileCacheFileSystem
-start = time.time()
+
 st.set_page_config(
     page_title="Australian Electricity",
     page_icon="✅",
