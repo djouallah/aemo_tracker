@@ -17,9 +17,8 @@ st.title("Australian Electricity Market")
 col1, col2 = st.columns([1, 1])
 
 @st.cache_resource(ttl=10*60)
-def import_data():
+def import_data(x):
    s3_file_system = s3fs.S3FileSystem(
-         
          key=  st.secrets["aws_access_key_id_secret"],
          secret= st.secrets["aws_secret_access_key_secret"] ,
          client_kwargs={
@@ -30,28 +29,31 @@ def import_data():
    fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./cache")
    duckdb.register_filesystem(fs)
    duckdb.sql('PRAGMA disable_progress_bar')
-   station = duckdb.sql('''Select DUID,min(Region) as Region,	min(FuelSourceDescriptor) as FuelSourceDescriptor ,
-                                    min(stationame) as stationame, min(DispatchType) as DispatchType
-                                    from  parquet_scan('s3://aemo/aemo/duid/duid.parquet' ) group by all ;''')
-   df=duckdb.sql(f"""
-      Select SETTLEMENTDATE, xx.DUID,Region,FuelSourceDescriptor, replace(stationame, '''', '') as stationame,MIN(SCADAVALUE) as mw
-            from  parquet_scan('s3://aemo/aemo/scada/data/*/*.parquet' , HIVE_PARTITIONING = 1)  as xx
-            inner join station
-            on xx.DUID = station.DUID
-            group by all order by xx.DUID,SETTLEMENTDATE
-            
-      """).df()
-   return df
+   df = duckdb.sql(x).df()
+     return df
 
 ########################################################## Query the Data #####################################
-scada = import_data()
+
+station = import_data('''Select DUID,min(Region) as Region,	min(FuelSourceDescriptor) as FuelSourceDescriptor ,
+                                    replace(min(stationame), '''', '') as stationame, min(DispatchType) as DispatchType
+                                    from  parquet_scan('s3://aemo/aemo/duid/duid.parquet' ) group by all ;''')
+scada=import_data(f"""
+      Select SETTLEMENTDATE, xx.DUID,Region,FuelSourceDescriptor, ,MIN(SCADAVALUE) as mw
+            from  parquet_scan('s3://aemo/aemo/scada/data/*/*.parquet' , HIVE_PARTITIONING = 1)
+            group by all order by xx.DUID,SETTLEMENTDATE    
+                  """)
+
 try :
-    DUID_Select= st.sidebar.multiselect('Select Station', duckdb.sql(''' Select distinct stationame from  scada WHERE mw !=0 order by stationame ''').df() )
+    DUID_Select= st.sidebar.multiselect('Select Station', duckdb.sql(''' Select distinct stationame from  station order by stationame ''').df() )
 
     xxxx = "','".join(DUID_Select)
     filter =  "'"+xxxx+"'"
     if len(DUID_Select) != 0 :
-        results= duckdb.sql(f''' Select SETTLEMENTDATE,(SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE,stationame, sum(mw) as mw from  scada where stationame in ({filter}) group by all  order by SETTLEMENTDATE  desc ''').df() 
+        results= duckdb.sql(f''' Select SETTLEMENTDATE,(SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE,stationame,sum(mw) as mw from  scada
+                            inner join station
+                            on scada.DUID = station.DUID
+                            where stationame in ({filter}) group by all  order by SETTLEMENTDATE  desc
+                            ''').df() 
         c = alt.Chart(results).mark_area().encode(x=alt.X('LOCALDATE:T', axis=alt.Axis(title="")), y='mw:Q',color='stationame:N',
                                             tooltip=['LOCALDATE','stationame','mw']).properties(
                                                 
