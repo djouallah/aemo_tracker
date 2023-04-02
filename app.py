@@ -26,11 +26,12 @@ def import_data():
   con=duckdb.connect()
   con.register_filesystem(fs)
   con.sql('PRAGMA disable_progress_bar')
-  station = con.sql("""Select DUID,min(Region) as Region,	min(FuelSourceDescriptor) as FuelSourceDescriptor ,
-                          replace(min(stationame), '''', '') as stationame, min(DispatchType) as DispatchType
-                          from  parquet_scan('s3://aemo/aemo/duid/duid.parquet' ) group by all
+  con.sql(""" create or replace table scada as 
+            Select DUID,min(Region) as Region,	min(FuelSourceDescriptor) as FuelSourceDescriptor ,
+            replace(min(stationame), '''', '') as stationame, min(DispatchType) as DispatchType
+            from  parquet_scan('s3://aemo/aemo/duid/duid.parquet' ) group by all
                           """)
-  scada=con.sql("""
+  con.sql("""create or replace table station as 
              Select SETTLEMENTDATE, DUID, MIN(SCADAVALUE) as mw
             from  parquet_scan('s3://aemo/aemo/scada/data/*/*.parquet' )
             group by all  
