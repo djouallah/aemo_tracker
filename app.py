@@ -26,19 +26,20 @@ def import_data():
   con=duckdb.connect()
   con.register_filesystem(fs)
   con.sql('PRAGMA disable_progress_bar')
-  return con
-
-########################################################## Query the Data #####################################
-con = import_data()
-station = con.sql("""Select DUID,min(Region) as Region,	min(FuelSourceDescriptor) as FuelSourceDescriptor ,
+  station = con.sql("""Select DUID,min(Region) as Region,	min(FuelSourceDescriptor) as FuelSourceDescriptor ,
                           replace(min(stationame), '''', '') as stationame, min(DispatchType) as DispatchType
                           from  parquet_scan('s3://aemo/aemo/duid/duid.parquet' ) group by all
                           """)
-scada=con.sql("""
+  scada=con.sql("""
              Select SETTLEMENTDATE, DUID, MIN(SCADAVALUE) as mw
             from  parquet_scan('s3://aemo/aemo/scada/data/*/*.parquet' )
             group by all  
                   """)
+  return con
+
+########################################################## Query the Data #####################################
+con = import_data()
+
 
 try :
     DUID_Select= st.sidebar.multiselect('Select Station', con.sql(''' Select distinct stationame from  station order by stationame ''').df() )
@@ -66,7 +67,7 @@ try :
                                                 tooltip=['day','FuelSourceDescriptor','mwh']).properties(
                                                     width=1200,
                                                     height=400)
-    max= con.sql('select max(SETTLEMENTDATE) from scada').df()
+    max= con.sql('select max(SETTLEMENTDATE) as max from scada').df()
     st.write(max)
     #st.subheader("Latest Updated: " + str(max[['test']].values[0][0]))
 
