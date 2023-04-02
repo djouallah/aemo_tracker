@@ -43,7 +43,7 @@ con = import_data()
 try :
     
     DUID_Select= st.sidebar.multiselect('Select Station', con.sql(''' Select distinct stationame from  station
-                                                                    inner join station
+                                                                    inner join scada
                                                                     on scada.DUID = station.DUID
                                                                     where SCADAVALUE !=0
                                                                     order by stationame
