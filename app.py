@@ -23,7 +23,8 @@ def import_data():
          secret= st.secrets["aws_secret_access_key_secret"] ,
          client_kwargs={
             'endpoint_url': st.secrets["endpoint_url_secret"] 
-         }
+         },
+       use_listings_cache=False
       )
    fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./cache", check_files= True)
    duckdb.register_filesystem(s3_file_system)
