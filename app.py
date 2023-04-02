@@ -1,5 +1,4 @@
 import streamlit as st
-import time
 import duckdb 
 import altair as alt
 import s3fs
@@ -40,9 +39,7 @@ def import_data():
 
 ########################################################## Query the Data #####################################
 con = import_data()
-stop = time.time()
-duration = stop-start
-st.write(duration)
+
 try :
     
     DUID_Select= st.sidebar.multiselect('Select Station', con.sql(''' Select distinct stationame from  station order by stationame ''').df() )
