@@ -2,7 +2,7 @@ import streamlit as st
 import duckdb 
 import altair as alt
 import s3fs
-from fsspec.implementations.cached import SimpleCacheFileSystem
+from fsspec.implementations.cached import WholeFileCacheFileSystem
 
 st.set_page_config(
     page_title="Australian Electricity",
@@ -25,7 +25,7 @@ def import_data():
             'endpoint_url': st.secrets["endpoint_url_secret"] 
          }
       )
-   fs = SimpleCacheFileSystem(fs=s3_file_system,cache_storage="./tmp")
+   fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./tmp")
 
    duckdb.register_filesystem(fs)
    duckdb.sql('PRAGMA disable_progress_bar')
