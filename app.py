@@ -38,7 +38,7 @@ station = import_data("""Select DUID,min(Region) as Region,	min(FuelSourceDescri
                                     replace(min(stationame), '''', '') as stationame, min(DispatchType) as DispatchType
                                     from  parquet_scan('s3://aemo/aemo/duid/duid.parquet' ) group by all """)
 scada=import_data(f"""
-      Select SETTLEMENTDATE, DUID,Region,FuelSourceDescriptor, MIN(SCADAVALUE) as mw
+      Select SETTLEMENTDATE, DUID, MIN(SCADAVALUE) as mw
             from  parquet_scan('s3://aemo/aemo/scada/data/*/*.parquet' , HIVE_PARTITIONING = 1)
             group by all order by DUID,SETTLEMENTDATE    
                   """)
