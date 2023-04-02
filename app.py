@@ -4,7 +4,7 @@ import duckdb
 import altair as alt
 import s3fs
 from fsspec.implementations.cached import WholeFileCacheFileSystem
-
+start = time.time()
 st.set_page_config(
     page_title="Australian Electricity",
     page_icon="✅",
@@ -40,6 +40,9 @@ def import_data():
 
 ########################################################## Query the Data #####################################
 con = import_data()
+stop = time.time()
+duration = stop-start
+st.write(duration)
 try :
     start = time.time()
     DUID_Select= st.sidebar.multiselect('Select Station', con.sql(''' Select distinct stationame from  station order by stationame ''').df() )
