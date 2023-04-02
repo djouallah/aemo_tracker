@@ -50,7 +50,7 @@ try :
     xxxx = "','".join(DUID_Select)
     filter =  "'"+xxxx+"'"
     
-    st.write(duration)
+    
     if len(DUID_Select) != 0 :
         
         results= con.sql(f''' Select SETTLEMENTDATE,(SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE,stationame,sum(mw) as mw from  scada
