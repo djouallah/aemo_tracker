@@ -25,7 +25,7 @@ def import_data():
             'endpoint_url': st.secrets["endpoint_url_secret"] 
          }
       )
-   fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./tmp")
+   fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./cache")
 
    duckdb.register_filesystem(fs)
    duckdb.sql('PRAGMA disable_progress_bar')
