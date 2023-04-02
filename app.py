@@ -23,7 +23,7 @@ def import_data():
          key=  st.secrets["aws_access_key_id_secret"],
          secret= st.secrets["aws_secret_access_key_secret"] ,
          client_kwargs={
-            'endpoint_url': st.secrets["endpoint_url_secret"] , listings_expiry_time=10 
+            'endpoint_url': st.secrets["endpoint_url_secret"] , listings_expiry_time : 10 
          }
        
       )
