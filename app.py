@@ -42,9 +42,6 @@ con = import_data()
 
 try :
     station_list = con.sql(''' Select distinct stationame from  station
-                               inner join scada
-                               on station.DUID = scada.DUID 
-                               where mv <> 0
                                order by stationame''').df()
     DUID_Select= st.sidebar.multiselect('Select Station', station_list  )
 
