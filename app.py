@@ -23,7 +23,7 @@ def import_data():
        listings_expiry_time = 600
       )
   fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./cache",cache_check=600)
-  con=duckdb.connect()
+  con=duckdb.connect('db')
   con.register_filesystem(fs)
   con.sql('PRAGMA disable_progress_bar')
   con.sql(""" create or replace table scada as 
