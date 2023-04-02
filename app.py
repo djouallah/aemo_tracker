@@ -16,7 +16,7 @@ st.title("Australian Electricity Market")
 
 col1, col2 = st.columns([1, 1])
 
-#@st.cache_data(ttl=5*60)
+@st.cache_data(ttl=5*60)
 def import_data():
    s3_file_system = s3fs.S3FileSystem(
          key=  st.secrets["aws_access_key_id_secret"],
@@ -26,12 +26,12 @@ def import_data():
          }
       )
    fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./cache", check_files= True)
-   duckdb.register_filesystem(s3_file_system)
+   duckdb.register_filesystem(fs)
    duckdb.sql('PRAGMA disable_progress_bar')
    station = duckdb.sql('''Select DUID,min(Region) as Region,	min(FuelSourceDescriptor) as FuelSourceDescriptor ,
                                     min(stationame) as stationame, min(DispatchType) as DispatchType
                                     from  parquet_scan('s3://aemo/aemo/duid/duid.parquet' ) group by all ;''')
-   scada=duckdb.sql(f"""
+   df=duckdb.sql(f"""
       Select SETTLEMENTDATE, (SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE ,
             xx.DUID,Region,FuelSourceDescriptor, replace(stationame, '''', '') as stationame,MIN(SCADAVALUE) as mw
             from  parquet_scan('s3://aemo/aemo/scada/data/*/*.parquet' , HIVE_PARTITIONING = 1)  as xx
@@ -39,8 +39,8 @@ def import_data():
             on xx.DUID = station.DUID
             group by all order by xx.DUID,SETTLEMENTDATE
             
-      """).arrow()
-   return scada
+      """).df()
+   return df
 
 ########################################################## Query the Data #####################################
 scada = import_data()
