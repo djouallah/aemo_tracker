@@ -23,27 +23,28 @@ s3_file_system = s3fs.S3FileSystem(
        listings_expiry_time = 600
       )
 fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./cache",cache_check=600)
-duckdb.register_filesystem(fs)
-duckdb.sql('PRAGMA disable_progress_bar')
+con=duckdb.connect()
+con.register_filesystem(fs)
+con.sql('PRAGMA disable_progress_bar')
 
 ########################################################## Query the Data #####################################
-station = duckdb.sql("""Select DUID,min(Region) as Region,	min(FuelSourceDescriptor) as FuelSourceDescriptor ,
+station = con.sql("""Select DUID,min(Region) as Region,	min(FuelSourceDescriptor) as FuelSourceDescriptor ,
                           replace(min(stationame), '''', '') as stationame, min(DispatchType) as DispatchType
                           from  parquet_scan('s3://aemo/aemo/duid/duid.parquet' ) group by all
-                          """).df()
-scada=duckdb.sql("""
+                          """)
+scada=con.sql("""
              Select SETTLEMENTDATE, DUID, MIN(SCADAVALUE) as mw
             from  parquet_scan('s3://aemo/aemo/scada/data/*/*.parquet' )
             group by all  
                   """).df()
 
 try :
-    DUID_Select= st.sidebar.multiselect('Select Station', duckdb.sql(''' Select distinct stationame from  station order by stationame ''').df() )
+    DUID_Select= st.sidebar.multiselect('Select Station', con.sql(''' Select distinct stationame from  station order by stationame ''').df() )
 
     xxxx = "','".join(DUID_Select)
     filter =  "'"+xxxx+"'"
     if len(DUID_Select) != 0 :
-        results= duckdb.sql(f''' Select SETTLEMENTDATE,(SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE,stationame,sum(mw) as mw from  scada
+        results= con.sql(f''' Select SETTLEMENTDATE,(SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE,stationame,sum(mw) as mw from  scada
                             inner join station
                             on scada.DUID = station.DUID
                             where stationame in ({filter}) group by all  order by SETTLEMENTDATE  desc
@@ -54,7 +55,7 @@ try :
                                                 width=1200,
                                                 height=400)
     else:
-        results= duckdb.sql(f''' Select date_trunc('day',SETTLEMENTDATE) as day,FuelSourceDescriptor,sum(mw)/12 as mwh from  scada
+        results= con.sql(f''' Select date_trunc('day',SETTLEMENTDATE) as day,FuelSourceDescriptor,sum(mw)/12 as mwh from  scada
                             inner join station
                             on scada.DUID = station.DUID
                             group by all
