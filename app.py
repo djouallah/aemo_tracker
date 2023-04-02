@@ -34,7 +34,7 @@ station = duckdb.sql("""Select DUID,min(Region) as Region,	min(FuelSourceDescrip
 scada=duckdb.sql("""
              Select SETTLEMENTDATE, DUID, MIN(SCADAVALUE) as mw
             from  parquet_scan('s3://aemo/aemo/scada/data/*/*.parquet' )
-            group by all order by DUID,SETTLEMENTDATE    
+            group by all  
                   """).df()
 
 try :
