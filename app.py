@@ -17,7 +17,7 @@ st.title("Australian Electricity Market")
 col1, col2 = st.columns([1, 1])
 
 @st.cache_data(ttl=5*60)
-def import_data(x):
+def import_data():
    s3_file_system = s3fs.S3FileSystem(
          key=  st.secrets["aws_access_key_id_secret"],
          secret= st.secrets["aws_secret_access_key_secret"] ,
@@ -44,7 +44,7 @@ def import_data(x):
    return scada
 
 ########################################################## Query the Data #####################################
-scada = import_data('x')
+scada = import_data()
 try :
     DUID_Select= st.sidebar.multiselect('Select Station', duckdb.sql(''' Select distinct stationame from  scada WHERE mw !=0 order by stationame ''').df() )
 
