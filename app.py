@@ -9,9 +9,7 @@ st.set_page_config(
     page_icon="✅",
     layout="wide",
 )
-                   
 
-# dashboard title
 st.title("Australian Electricity Market")
 
 col1, col2 = st.columns([1, 1])
