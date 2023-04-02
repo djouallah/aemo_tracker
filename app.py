@@ -16,7 +16,7 @@ st.title("Australian Electricity Market")
 
 col1, col2 = st.columns([1, 1])
 
-@st.cache_resource(ttl=5*60)
+@st.experimental_singleton(ttl=24*60*60)
 def import_data():
    s3_file_system = s3fs.S3FileSystem(
          key=  st.secrets["aws_access_key_id_secret"],
@@ -66,6 +66,9 @@ try :
 
     st.subheader("Latest Updated: " + str(results["SETTLEMENTDATE"].max()))
 
+   
+    
+
     ############################################################# Visualisation ####################################
     #localdate is just a stupid hack, Javascript read datetime as UTC not local time :(
 
@@ -75,18 +78,15 @@ try :
     #Download Button
 
 
-    def convert_df(df):
-        # IMPORTANT: Cache the conversion to prevent computation on every rerun
-        return df.to_csv().encode('utf-8')
-
-    csv = convert_df(results)
+    csv = duckdb.sql(''' Select * EXCLUDE(LOCALDATE) from  results ''').df()
     col2.download_button(
         label="Download data as CSV",
-        data=csv,
+        data=csv.to_csv().encode('utf-8'),
         file_name='large_df.csv',
         mime='text/csv',
     )
     del results
+    del csv
 
 
     link='[for a Full experience go to Nemtracker Dashboard](https://datastudio.google.com/reporting/1Fah7mn1X9itiFAMIvCFkj_tEYXHdxAll/page/TyK1)'
