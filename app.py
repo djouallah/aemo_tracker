@@ -16,7 +16,7 @@ st.title("Australian Electricity Market")
 
 col1, col2 = st.columns([1, 1])
 
-@st.cache_data(ttl=5*60)
+@st.cache_data(ttl=10*60)
 def import_data():
    s3_file_system = s3fs.S3FileSystem(
          
@@ -27,8 +27,8 @@ def import_data():
          } ,
        listings_expiry_time = 10 
       )
-   fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./cache", check_files= True)
-   duckdb.register_filesystem(s3_file_system)
+   fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./cache")
+   duckdb.register_filesystem(fs)
    duckdb.sql('PRAGMA disable_progress_bar')
    station = duckdb.sql('''Select DUID,min(Region) as Region,	min(FuelSourceDescriptor) as FuelSourceDescriptor ,
                                     min(stationame) as stationame, min(DispatchType) as DispatchType
