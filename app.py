@@ -16,7 +16,7 @@ st.title("Australian Electricity Market")
 
 col1, col2 = st.columns([1, 1])
 
-@st.cache_data(ttl=10*60)
+@st.cache_resource(ttl=10*60)
 def import_data():
    s3_file_system = s3fs.S3FileSystem(
          
