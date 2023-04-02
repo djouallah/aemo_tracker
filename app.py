@@ -87,13 +87,7 @@ try :
         file_name='large_df.csv',
         mime='text/csv',
     )
-    del results
-    del csv
-    del scada
-    del c
-    del station
-
-
+    
     link='[for a Full experience go to Nemtracker Dashboard](https://datastudio.google.com/reporting/1Fah7mn1X9itiFAMIvCFkj_tEYXHdxAll/page/TyK1)'
     col1.markdown(link,unsafe_allow_html=True)
 
