@@ -34,8 +34,7 @@ def import_data():
                                     min(stationame) as stationame, min(DispatchType) as DispatchType
                                     from  parquet_scan('s3://aemo/aemo/duid/duid.parquet' ) group by all ;''')
    df=duckdb.sql(f"""
-      Select SETTLEMENTDATE, (SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE ,
-            xx.DUID,Region,FuelSourceDescriptor, replace(stationame, '''', '') as stationame,MIN(SCADAVALUE) as mw
+      Select SETTLEMENTDATE, xx.DUID,Region,FuelSourceDescriptor, replace(stationame, '''', '') as stationame,MIN(SCADAVALUE) as mw
             from  parquet_scan('s3://aemo/aemo/scada/data/*/*.parquet' , HIVE_PARTITIONING = 1)  as xx
             inner join station
             on xx.DUID = station.DUID
@@ -52,14 +51,14 @@ try :
     xxxx = "','".join(DUID_Select)
     filter =  "'"+xxxx+"'"
     if len(DUID_Select) != 0 :
-        results= duckdb.sql(f''' Select SETTLEMENTDATE,LOCALDATE,stationame, sum(mw) as mw from  scada where stationame in ({filter}) group by all  order by SETTLEMENTDATE  desc ''').df() 
+        results= duckdb.sql(f''' Select SETTLEMENTDATE,(SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE,stationame, sum(mw) as mw from  scada where stationame in ({filter}) group by all  order by SETTLEMENTDATE  desc ''').df() 
         c = alt.Chart(results).mark_area().encode( x='LOCALDATE:T', y='mw:Q',color='stationame:N',
                                             tooltip=['LOCALDATE','stationame','mw']).properties(
                                                 
                                                 width=1200,
                                                 height=400)
     else:
-        results= duckdb.sql(''' Select SETTLEMENTDATE,LOCALDATE,FuelSourceDescriptor, sum(mw) as mw from  scada group by all order by SETTLEMENTDATE desc''').df()
+        results= duckdb.sql(''' Select SETTLEMENTDATE,(SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE,FuelSourceDescriptor, sum(mw) as mw from  scada group by all order by SETTLEMENTDATE desc''').df()
         c = alt.Chart(results).mark_area().encode( x='LOCALDATE:T', y='mw:Q',color='FuelSourceDescriptor:N',
                                                 tooltip=['LOCALDATE','FuelSourceDescriptor','mw']).properties(
                                                     width=1200,
