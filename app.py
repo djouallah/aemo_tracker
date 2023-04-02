@@ -41,10 +41,14 @@ def import_data():
 ########################################################## Query the Data #####################################
 con = import_data()
 try :
+    start = time.time()
     DUID_Select= st.sidebar.multiselect('Select Station', con.sql(''' Select distinct stationame from  station order by stationame ''').df() )
 
     xxxx = "','".join(DUID_Select)
     filter =  "'"+xxxx+"'"
+    stop = time.time()
+    duration = stop-start
+    st.write(duration
     if len(DUID_Select) != 0 :
         start = time.time()
         results= con.sql(f''' Select SETTLEMENTDATE,(SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE,stationame,sum(mw) as mw from  scada
