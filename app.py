@@ -41,14 +41,12 @@ def import_data():
 con = import_data()
 
 try :
-    
-    DUID_Select= st.sidebar.multiselect('Select Station', con.sql(''' Select distinct stationame from  station
-                                                                    inner join scada
-                                                                    on scada.DUID = station.DUID
-                                                                    where SCADAVALUE !=0
-                                                                    order by stationame
-                                                                    ''').df()
-                                                                    )
+    station_list = con.sql(''' Select distinct stationame from  station
+                               inner join scada
+                               on scada.DUID = station.DUID
+                               where SCADAVALUE !=0
+                               order by stationame''').df()
+    DUID_Select= st.sidebar.multiselect('Select Station', station_list  )
 
     xxxx = "','".join(DUID_Select)
     filter =  "'"+xxxx+"'"
