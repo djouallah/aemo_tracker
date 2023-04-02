@@ -55,7 +55,7 @@ try :
                             on scada.DUID = station.DUID
                             where stationame in ({filter}) group by all  order by SETTLEMENTDATE  desc
                             ''').df() 
-        c = alt.Chart(results).mark_area().encode(x=alt.X('LOCALDATE:T', axis=alt.Axis(Label=none)), y='mw:Q',color='stationame:N',
+        c = alt.Chart(results).mark_area().encode(x=alt.X('LOCALDATE:T', axis=alt.Axis(title="")), y='mw:Q',color='stationame:N',
                                             tooltip=['LOCALDATE','stationame','mw']).properties(
                                                 
                                                 width=1200,
@@ -66,7 +66,7 @@ try :
                             on scada.DUID = station.DUID
                             group by all
                             ''').df() 
-        c = alt.Chart(results).mark_bar().encode( x=alt.X('day:N', axis=alt.Axis(title="")), y='mwh:Q',color='FuelSourceDescriptor:N',
+        c = alt.Chart(results).mark_bar().encode( x=alt.X('day:N', axis=alt.Axis(labels=False)), y='mwh:Q',color='FuelSourceDescriptor:N',
                                                 tooltip=['day','FuelSourceDescriptor','mwh']).properties(
                                                     width=1200,
                                                     height=400)
