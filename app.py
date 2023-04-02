@@ -19,11 +19,11 @@ col1, col2 = st.columns([1, 1])
 @st.cache_data(ttl=5*60)
 def import_data():
    s3_file_system = s3fs.S3FileSystem(
-         listings_expiry_time=10 ,
+         
          key=  st.secrets["aws_access_key_id_secret"],
          secret= st.secrets["aws_secret_access_key_secret"] ,
          client_kwargs={
-            'endpoint_url': st.secrets["endpoint_url_secret"] 
+            'endpoint_url': st.secrets["endpoint_url_secret"] , listings_expiry_time=10 
          }
        
       )
