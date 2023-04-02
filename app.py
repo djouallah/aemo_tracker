@@ -83,6 +83,7 @@ try :
     )
     del results
     del csv
+    del scada
 
 
     link='[for a Full experience go to Nemtracker Dashboard](https://datastudio.google.com/reporting/1Fah7mn1X9itiFAMIvCFkj_tEYXHdxAll/page/TyK1)'
