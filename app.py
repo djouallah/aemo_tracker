@@ -80,10 +80,9 @@ try :
     
     ###########################################################Buttons and Links ####################################
     #Download Button
-    csv = duckdb.sql(''' Select * EXCLUDE(LOCALDATE) from  results ''').df()
     col2.download_button(
         label="Download data as CSV",
-        data=csv.to_csv().encode('utf-8'),
+        data=results.to_csv().encode('utf-8'),
         file_name='large_df.csv',
         mime='text/csv',
     )
