@@ -61,13 +61,13 @@ try :
                                                 width=1200,
                                                 height=400)
     else:
-        results= duckdb.sql(f''' Select SETTLEMENTDATE,(SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE,FuelSourceDescriptor,sum(mw) as mw from  scada
+        results= duckdb.sql(f''' Select date(SETTLEMENTDATE) as day,FuelSourceDescriptor,sum(mw)/12 as mwh from  scada
                             inner join station
                             on scada.DUID = station.DUID
                             group by all
                             ''').df() 
-        c = alt.Chart(results).mark_area().encode( x=alt.X('LOCALDATE:T', axis=alt.Axis(title="")), y='mw:Q',color='FuelSourceDescriptor:N',
-                                                tooltip=['LOCALDATE','FuelSourceDescriptor','mw']).properties(
+        c = alt.Chart(results).mark_area().encode( x=alt.X('day:T', axis=alt.Axis(title="")), y='mwh:Q',color='FuelSourceDescriptor:N',
+                                                tooltip=['day','FuelSourceDescriptor','mw']).properties(
                                                     width=1200,
                                                     height=400)
 
