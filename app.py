@@ -67,7 +67,7 @@ try :
                             group by all
                             ''').df() 
         c = alt.Chart(results).mark_area().encode( x=alt.X('day:T', axis=alt.Axis(title="")), y='mwh:Q',color='FuelSourceDescriptor:N',
-                                                tooltip=['day','FuelSourceDescriptor','mw']).properties(
+                                                tooltip=['day','FuelSourceDescriptor','mwh']).properties(
                                                     width=1200,
                                                     height=400)
 
