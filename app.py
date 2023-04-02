@@ -30,7 +30,7 @@ def import_data(x):
    duckdb.register_filesystem(fs)
    duckdb.sql('PRAGMA disable_progress_bar')
    df = duckdb.sql(x).df()
-     return df
+   return df
 
 ########################################################## Query the Data #####################################
 
