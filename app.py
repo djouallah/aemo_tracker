@@ -25,7 +25,7 @@ def import_data(x):
    fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./cache",cache_check=600)
    duckdb.register_filesystem(fs)
    duckdb.sql('PRAGMA disable_progress_bar')
-   df = duckdb.sql(x).df()
+   df = duckdb.sql(x)
    return df
 ########################################################## Query the Data #####################################
 station = import_data("""Select DUID,min(Region) as Region,	min(FuelSourceDescriptor) as FuelSourceDescriptor ,
