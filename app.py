@@ -23,23 +23,23 @@ def import_data():
        listings_expiry_time = 600
       )
   fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./cache",cache_check=600)
-  con=duckdb.connect('db')
+  con=duckdb.connect()
   con.register_filesystem(fs)
   con.sql('PRAGMA disable_progress_bar')
-  con.sql(""" create or replace table scada as 
+  con.sql(""" create or replace table station as 
             Select DUID,min(Region) as Region,	min(FuelSourceDescriptor) as FuelSourceDescriptor ,
             replace(min(stationame), '''', '') as stationame, min(DispatchType) as DispatchType
             from  parquet_scan('s3://aemo/aemo/duid/duid.parquet' ) group by all
                           """)
-  con.sql("""create or replace table station as 
+  con.sql("""create or replace table scada as 
              Select SETTLEMENTDATE, DUID, MIN(SCADAVALUE) as mw
             from  parquet_scan('s3://aemo/aemo/scada/data/*/*.parquet' )
             group by all  
                   """)
-  return print('done')
+  return con
 
 ########################################################## Query the Data #####################################
-
+con = import_data()
 try :
     DUID_Select= st.sidebar.multiselect('Select Station', con.sql(''' Select distinct stationame from  station order by stationame ''').df() )
 
