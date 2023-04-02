@@ -36,11 +36,9 @@ def import_data():
             from  parquet_scan('s3://aemo/aemo/scada/data/*/*.parquet' )
             group by all  
                   """)
-  return con
+  return print('done')
 
 ########################################################## Query the Data #####################################
-con = import_data()
-
 
 try :
     DUID_Select= st.sidebar.multiselect('Select Station', con.sql(''' Select distinct stationame from  station order by stationame ''').df() )
