@@ -26,7 +26,6 @@ def import_data():
          }
       )
    fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./cache", check_files= True)
-   print(x)
    duckdb.register_filesystem(fs)
    duckdb.sql('PRAGMA disable_progress_bar')
    station = duckdb.sql('''Select DUID,min(Region) as Region,	min(FuelSourceDescriptor) as FuelSourceDescriptor ,
@@ -66,9 +65,6 @@ try :
 
     st.subheader("Latest Updated: " + str(results["SETTLEMENTDATE"].max()))
 
-   
-    
-
     ############################################################# Visualisation ####################################
     #localdate is just a stupid hack, Javascript read datetime as UTC not local time :(
 
@@ -76,8 +72,6 @@ try :
     del c
     ###########################################################Buttons and Links ####################################
     #Download Button
-
-
     csv = duckdb.sql(''' Select * EXCLUDE(LOCALDATE) from  results ''').df()
     col2.download_button(
         label="Download data as CSV",
