@@ -67,7 +67,7 @@ try :
                                                     width=1200,
                                                     height=400)
 
-    st.subheader("Latest Updated: " + str(scada["SETTLEMENTDATE"].max()))
+    #st.subheader("Latest Updated: " + str(scada["SETTLEMENTDATE"].max()))
 
     ############################################################# Visualisation ####################################
     #localdate is just a stupid hack, Javascript read datetime as UTC not local time :(
