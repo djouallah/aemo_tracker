@@ -76,7 +76,7 @@ try :
     #localdate is just a stupid hack, Javascript read datetime as UTC not local time :(
 
     st.write(c)
-    del c
+    
     ###########################################################Buttons and Links ####################################
     #Download Button
     csv = duckdb.sql(''' Select * EXCLUDE(LOCALDATE) from  results ''').df()
@@ -89,6 +89,8 @@ try :
     del results
     del csv
     del scada
+    del c
+    del station
 
 
     link='[for a Full experience go to Nemtracker Dashboard](https://datastudio.google.com/reporting/1Fah7mn1X9itiFAMIvCFkj_tEYXHdxAll/page/TyK1)'
