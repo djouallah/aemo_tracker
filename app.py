@@ -55,11 +55,15 @@ try :
         stop = time.time()
         duration = stop-start
         st.write(duration)
+        
+        start = time.time()
         c = alt.Chart(results).mark_area().encode(x=alt.X('LOCALDATE:T', axis=alt.Axis(title="")), y='mw:Q',color='stationame:N',
                                             tooltip=['LOCALDATE','stationame','mw']).properties(
-                                                
                                                 width=1200,
                                                 height=400)
+        stop = time.time()
+        duration = stop-start
+        st.write(duration)
     else:
         results= con.sql(f''' Select date_trunc('day',SETTLEMENTDATE) as day,FuelSourceDescriptor,sum(mw)/12 as mwh from  scada
                             inner join station
