@@ -44,33 +44,28 @@ stop = time.time()
 duration = stop-start
 st.write(duration)
 try :
-    start = time.time()
+    
     DUID_Select= st.sidebar.multiselect('Select Station', con.sql(''' Select distinct stationame from  station order by stationame ''').df() )
 
     xxxx = "','".join(DUID_Select)
     filter =  "'"+xxxx+"'"
-    stop = time.time()
-    duration = stop-start
+    
     st.write(duration)
     if len(DUID_Select) != 0 :
-        start = time.time()
+        
         results= con.sql(f''' Select SETTLEMENTDATE,(SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE,stationame,sum(mw) as mw from  scada
                             inner join station
                             on scada.DUID = station.DUID
                             where stationame in ({filter}) group by all
                             ''').df() 
-        stop = time.time()
-        duration = stop-start
-        st.write(duration)
         
-        start = time.time()
+        
+        
         c = alt.Chart(results).mark_area().encode(x=alt.X('LOCALDATE:T', axis=alt.Axis(title="")), y='mw:Q',color='stationame:N',
                                             tooltip=['LOCALDATE','stationame','mw']).properties(
                                                 width=1200,
                                                 height=400)
-        stop = time.time()
-        duration = stop-start
-        st.write(duration)
+        
     else:
         results= con.sql(f''' Select date_trunc('day',SETTLEMENTDATE) as day,FuelSourceDescriptor,sum(mw)/12 as mwh from  scada
                             inner join station
