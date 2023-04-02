@@ -49,7 +49,7 @@ try :
         results= con.sql(f''' Select SETTLEMENTDATE,(SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE,stationame,sum(mw) as mw from  scada
                             inner join station
                             on scada.DUID = station.DUID
-                            where stationame in ({filter}) group by all  order by SETTLEMENTDATE  desc
+                            where stationame in ({filter}) group by all
                             ''').df() 
         c = alt.Chart(results).mark_area().encode(x=alt.X('LOCALDATE:T', axis=alt.Axis(title="")), y='mw:Q',color='stationame:N',
                                             tooltip=['LOCALDATE','stationame','mw']).properties(
