@@ -44,7 +44,7 @@ try :
     station_list = con.sql(''' Select distinct stationame from  station
                                inner join scada
                                on scada.DUID = station.DUID
-                               where SCADAVALUE !=0
+                               where mv !=0
                                order by stationame''').df()
     DUID_Select= st.sidebar.multiselect('Select Station', station_list  )
 
