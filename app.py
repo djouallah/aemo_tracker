@@ -1,4 +1,5 @@
 import streamlit as st
+import time
 import duckdb 
 import altair as alt
 import s3fs
@@ -45,11 +46,15 @@ try :
     xxxx = "','".join(DUID_Select)
     filter =  "'"+xxxx+"'"
     if len(DUID_Select) != 0 :
+        start = time.time()
         results= con.sql(f''' Select SETTLEMENTDATE,(SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE,stationame,sum(mw) as mw from  scada
                             inner join station
                             on scada.DUID = station.DUID
                             where stationame in ({filter}) group by all
                             ''').df() 
+        stop = time.time()
+        duration = stop-start
+        st.write(duration)
         c = alt.Chart(results).mark_area().encode(x=alt.X('LOCALDATE:T', axis=alt.Axis(title="")), y='mw:Q',color='stationame:N',
                                             tooltip=['LOCALDATE','stationame','mw']).properties(
                                                 
