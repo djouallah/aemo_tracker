@@ -25,7 +25,7 @@ def import_data():
          client_kwargs={
             'endpoint_url': st.secrets["endpoint_url_secret"] 
          }
-       l
+       
       )
    fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./cache", check_files= True)
    duckdb.register_filesystem(s3_file_system)
