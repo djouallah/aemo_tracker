@@ -16,7 +16,7 @@ st.title("Australian Electricity Market")
 
 col1, col2 = st.columns([1, 1])
 
-@st.cache_resource(ttl=5*60)
+#@st.cache_resource(ttl=5*60)
 def import_data():
    s3_file_system = s3fs.S3FileSystem(
          key=  st.secrets["aws_access_key_id_secret"],
