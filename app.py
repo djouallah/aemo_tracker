@@ -19,10 +19,9 @@ def import_data():
          secret= st.secrets["aws_secret_access_key_secret"] ,
          client_kwargs={
             'endpoint_url': st.secrets["endpoint_url_secret"] 
-         } ,
-       listings_expiry_time = 600
+         } 
       )
-  fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./cache",cache_check=600)
+  fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./cache")
   con=duckdb.connect()
   con.register_filesystem(fs)
   con.sql('PRAGMA disable_progress_bar')
