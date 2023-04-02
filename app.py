@@ -16,8 +16,8 @@ st.title("Australian Electricity Market")
 
 col1, col2 = st.columns([1, 1])
 
-#@st.cache_data(ttl=5*60)
-def import_data():
+@st.cache_data(ttl=5*60)
+def import_data(x):
    s3_file_system = s3fs.S3FileSystem(
          key=  st.secrets["aws_access_key_id_secret"],
          secret= st.secrets["aws_secret_access_key_secret"] ,
@@ -26,7 +26,7 @@ def import_data():
          }
       )
    fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./cache", check_files= True)
-
+   print(x)
    duckdb.register_filesystem(fs)
    duckdb.sql('PRAGMA disable_progress_bar')
    station = duckdb.sql('''Select DUID,min(Region) as Region,	min(FuelSourceDescriptor) as FuelSourceDescriptor ,
@@ -44,7 +44,7 @@ def import_data():
    return scada
 
 ########################################################## Query the Data #####################################
-scada = import_data()
+scada = import_data('x')
 try :
     DUID_Select= st.sidebar.multiselect('Select Station', duckdb.sql(''' Select distinct stationame from  scada WHERE mw !=0 order by stationame ''').df() )
 
