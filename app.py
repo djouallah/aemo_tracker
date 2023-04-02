@@ -16,7 +16,7 @@ st.title("Australian Electricity Market")
 
 col1, col2 = st.columns([1, 1])
 
-#@st.cache_data(ttl=10*60)
+@st.cache_data(ttl=10*60)
 def import_data():
    s3_file_system = s3fs.S3FileSystem(
          
@@ -25,7 +25,7 @@ def import_data():
          client_kwargs={
             'endpoint_url': st.secrets["endpoint_url_secret"] 
          } ,
-       listings_expiry_time = 600 
+       listings_expiry_time = 10
       )
    fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./cache")
    duckdb.register_filesystem(fs)
