@@ -9,12 +9,10 @@ st.set_page_config(
     page_icon="✅",
     layout="wide",
 )
-
 st.title("Australian Electricity Market")
-
 col1, col2 = st.columns([1, 1])
 
-@st.cache_resource(ttl=10*60)
+#@st.cache_resource(ttl=10*60)
 def import_data(x):
    s3_file_system = s3fs.S3FileSystem(
          key=  st.secrets["aws_access_key_id_secret"],
@@ -22,16 +20,14 @@ def import_data(x):
          client_kwargs={
             'endpoint_url': st.secrets["endpoint_url_secret"] 
          } ,
-       listings_expiry_time = 10
+       listings_expiry_time = 600
       )
-   fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./cache")
+   fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./cache",cache_check=600)
    duckdb.register_filesystem(fs)
    duckdb.sql('PRAGMA disable_progress_bar')
    df = duckdb.sql(x).df()
    return df
-
 ########################################################## Query the Data #####################################
-
 station = import_data("""Select DUID,min(Region) as Region,	min(FuelSourceDescriptor) as FuelSourceDescriptor ,
                           replace(min(stationame), '''', '') as stationame, min(DispatchType) as DispatchType
                           from  parquet_scan('s3://aemo/aemo/duid/duid.parquet' ) group by all
