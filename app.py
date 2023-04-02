@@ -66,12 +66,12 @@ try :
                             on scada.DUID = station.DUID
                             group by all
                             ''').df() 
-        c = alt.Chart(results).mark_area().encode( x=alt.X('day:T', axis=alt.Axis(title="")), y='mwh:Q',color='FuelSourceDescriptor:N',
+        c = alt.Chart(results).mark_area().encode( x=alt.X('day', axis=alt.Axis(title="")), y='mwh:Q',color='FuelSourceDescriptor:N',
                                                 tooltip=['day','FuelSourceDescriptor','mwh']).properties(
                                                     width=1200,
                                                     height=400)
 
-    st.subheader("Latest Updated: " + str(results["SETTLEMENTDATE"].max()))
+    st.subheader("Latest Updated: " + str(scada["SETTLEMENTDATE"].max()))
 
     ############################################################# Visualisation ####################################
     #localdate is just a stupid hack, Javascript read datetime as UTC not local time :(
