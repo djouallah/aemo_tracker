@@ -52,14 +52,14 @@ try :
     filter =  "'"+xxxx+"'"
     if len(DUID_Select) != 0 :
         results= duckdb.sql(f''' Select SETTLEMENTDATE,(SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE,stationame, sum(mw) as mw from  scada where stationame in ({filter}) group by all  order by SETTLEMENTDATE  desc ''').df() 
-        c = alt.Chart(results).mark_area().encode(x=alt.X('LOCALDATE:T', axis=alt.Axis(labels=False)), y='mw:Q',color='stationame:N',
+        c = alt.Chart(results).mark_area().encode(x=alt.X('LOCALDATE:T', axis=alt.Axis(title="")), y='mw:Q',color='stationame:N',
                                             tooltip=['LOCALDATE','stationame','mw']).properties(
                                                 
                                                 width=1200,
                                                 height=400)
     else:
         results= duckdb.sql(''' Select SETTLEMENTDATE,(SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE,FuelSourceDescriptor, sum(mw) as mw from  scada group by all order by SETTLEMENTDATE desc''').df()
-        c = alt.Chart(results).mark_area().encode( x=alt.X('LOCALDATE:T', axis=alt.Axis(labels=False)), y='mw:Q',color='FuelSourceDescriptor:N',
+        c = alt.Chart(results).mark_area().encode( x=alt.X('LOCALDATE:T', axis=alt.Axis(title="")), y='mw:Q',color='FuelSourceDescriptor:N',
                                                 tooltip=['LOCALDATE','FuelSourceDescriptor','mw']).properties(
                                                     width=1200,
                                                     height=400)
