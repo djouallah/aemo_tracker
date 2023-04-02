@@ -66,8 +66,8 @@ try :
                                                 tooltip=['day','FuelSourceDescriptor','mwh']).properties(
                                                     width=1200,
                                                     height=400)
-
-    #st.subheader("Latest Updated: " + str(scada["SETTLEMENTDATE"].max()))
+    max= con.sql('select max(SETTLEMENTDATE) from scada').df()
+    st.subheader("Latest Updated: " + str(max[['test']].values[0][0]))
 
     ############################################################# Visualisation ####################################
     #localdate is just a stupid hack, Javascript read datetime as UTC not local time :(
