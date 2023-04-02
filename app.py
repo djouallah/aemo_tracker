@@ -26,7 +26,7 @@ def import_data():
          }
       )
    fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./cache", check_files= True)
-   duckdb.register_filesystem(fs)
+   duckdb.register_filesystem(s3_file_system)
    duckdb.sql('PRAGMA disable_progress_bar')
    station = duckdb.sql('''Select DUID,min(Region) as Region,	min(FuelSourceDescriptor) as FuelSourceDescriptor ,
                                     min(stationame) as stationame, min(DispatchType) as DispatchType
