@@ -7,14 +7,14 @@ import pyarrow.dataset as ds
 
 
 st.set_page_config(
-    page_title="Australian Electricity Market, only a POC how to build a full data pipeline using Only Python from Ingestion to Viz",
+    page_title="Australian Electricity",
     page_icon="✅",
     layout="wide",
 )
                    
 
 # dashboard title
-st.title("Australian Electricity Market, POC using only Python, Cloudflare R2, DuckDB and Streamlit")
+st.title("Australian Electricity Market")
 
 col1, col2 = st.columns([1, 1])
 
