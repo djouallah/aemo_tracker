@@ -42,7 +42,7 @@ con = import_data()
 try :
     station_list = con.sql(''' Select distinct stationame from  station
                                order by stationame''').df()
-    DUID_Select= st.sidebar.multiselect('Select Station', station_list  )
+    DUID_Select= st.multiselect('Select Station', station_list  )
 
     xxxx = "','".join(DUID_Select)
     filter =  "'"+xxxx+"'" 
