@@ -20,7 +20,7 @@ def import_data():
          client_kwargs={
             'endpoint_url': st.secrets["endpoint_url_secret"] 
          } ,
-      listings_expiry_time = 600
+      listings_expiry_time = 10
       )
   fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./cache")
   con=duckdb.connect()
@@ -31,25 +31,21 @@ def import_data():
             replace(min(stationame), '''', '') as stationame, min(DispatchType) as DispatchType
             from  parquet_scan('s3://aemo/aemo/duid/duid.parquet' ) group by all
                           """)
-  con.sql("""create or replace view scada as 
+  con.sql("""create or replace table scada as 
              Select SETTLEMENTDATE, DUID, MIN(SCADAVALUE) as mw
             from  parquet_scan('s3://aemo/aemo/scada/data/*/*.parquet' )
             group by all  
                   """)
   return con
-
 ########################################################## Query the Data #####################################
 con = import_data()
-
 try :
     station_list = con.sql(''' Select distinct stationame from  station
                                order by stationame''').df()
     DUID_Select= st.sidebar.multiselect('Select Station', station_list  )
 
     xxxx = "','".join(DUID_Select)
-    filter =  "'"+xxxx+"'"
-    
-    
+    filter =  "'"+xxxx+"'" 
     if len(DUID_Select) != 0 :
         
         results= con.sql(f''' Select SETTLEMENTDATE,(SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE,stationame,sum(mw) as mw from  scada
