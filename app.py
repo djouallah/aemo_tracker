@@ -6,8 +6,7 @@ from fsspec.implementations.cached import WholeFileCacheFileSystem
 
 st.set_page_config(
     page_title="Australian Electricity",
-    page_icon="✅",
-    layout="wide",
+    page_icon="✅"
 )
 st.title("Australian Electricity Market")
 col1, col2 = st.columns([1, 1])
