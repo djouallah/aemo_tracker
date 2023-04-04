@@ -59,7 +59,6 @@ try :
                                             tooltip=['LOCALDATE','stationame','mw']).properties(
                                                 width=1200,
                                                 height=400)
-        st.write(c)
         
     else:
         results= con.sql(f''' Select date_trunc('hour',SETTLEMENTDATE) as day,FuelSourceDescriptor,sum(mw)/12 as mwh from  scada
@@ -67,16 +66,10 @@ try :
                             on scada.DUID = station.DUID
                             group by all
                             ''').df() 
-        brush = alt.selection_interval()
-        c1 = alt.Chart(results).mark_area().encode( x=alt.X('day:N', axis=alt.Axis(labels=False)), y='mwh:Q',color='FuelSourceDescriptor:N',
+        c = alt.Chart(results).mark_area().encode( x=alt.X('day:N', axis=alt.Axis(labels=False)), y='mwh:Q',color='FuelSourceDescriptor:N',
                                                 tooltip=['day','FuelSourceDescriptor','mwh']).properties(
                                                     width=1200,
-                                                    height=400).add_params(
-                                                    brush
-                                                       )
-        c2 = alt.Chart(results).mark_bar().encode( y= 'FuelSourceDescriptor:N', x='mwh:Q',color='FuelSourceDescriptor:N',
-                                                tooltip=['FuelSourceDescriptor','mwh']).transform_filter(brush)
-        st.write(c1)
+                                                    height=400)
     max= con.sql('''select strftime(max(SETTLEMENTDATE), '%A, %-d %B %Y - %I:%M:%S %p') as max from scada''').fetchone()
     st.write(max)
     #st.subheader("Latest Updated: " + str(max[['test']].values[0][0]))
@@ -84,7 +77,7 @@ try :
     ############################################################# Visualisation ####################################
     #localdate is just a stupid hack, Javascript read datetime as UTC not local time :(
 
-    
+    st.write(c)
     
     ###########################################################Buttons and Links ####################################
     #Download Button
