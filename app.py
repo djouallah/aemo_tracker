@@ -26,7 +26,7 @@ def import_data():
   con.register_filesystem(fs)
   con.sql('PRAGMA disable_progress_bar')
   con.sql(""" create or replace table station as 
-            Select DUID,min(Region) as Region,	min(FuelSourceDescriptor) as FuelSourceDescriptor ,
+            Select DUID,min(Region) as Region,	min(trim(FuelSourceDescriptor)) as FuelSourceDescriptor ,
             replace(min(stationame), '''', '') as stationame, min(DispatchType) as DispatchType
             from  parquet_scan('s3://aemo/aemo/duid/duid.parquet' ) group by all
                           """)
