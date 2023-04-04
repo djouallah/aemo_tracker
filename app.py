@@ -61,7 +61,7 @@ try :
                                                 height=400)
         
     else:
-        results= con.sql(f''' Select date_trunc('day',SETTLEMENTDATE) as day,FuelSourceDescriptor,sum(mw)/12 as mwh from  scada
+        results= con.sql(f''' Select date_trunc('hour',SETTLEMENTDATE) as day,FuelSourceDescriptor,sum(mw)/12 as mwh from  scada
                             inner join station
                             on scada.DUID = station.DUID
                             group by all
