@@ -76,7 +76,7 @@ try :
                                                        )
         c2 = alt.Chart(results).mark_bar().encode( y= 'FuelSourceDescriptor:N', x='mwh:Q',color='FuelSourceDescriptor:N',
                                                 tooltip=['FuelSourceDescriptor','mwh']).transform_filter(brush)
-        st.write(c1&c2)
+        st.write(c1)
     max= con.sql('''select strftime(max(SETTLEMENTDATE), '%A, %-d %B %Y - %I:%M:%S %p') as max from scada''').fetchone()
     st.write(max)
     #st.subheader("Latest Updated: " + str(max[['test']].values[0][0]))
