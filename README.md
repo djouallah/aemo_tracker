@@ -1,6 +1,6 @@
 # Introduction
 a very simple pipeline to display AEMO data, 2 script to download data from aemo website and save it in a cloud storage (Cloudflare R2, you can use S3, GCP etc)
-and a front end using streamlit, the Queries are run using DuckDB
+and a front end using streamlit, the Queries are run using DuckDB, all the code is written in Python, except some queries in SQL
 
 
 # Data ingestion
