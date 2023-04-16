@@ -38,7 +38,11 @@ def import_data():
             from  parquet_scan([
             's3://aemo/aemo/scada/data/Date={datetime.strftime(now, '%Y-%m-%d')}/*.parquet',
             's3://aemo/aemo/scada/data/Date={datetime.strftime(now - timedelta(days=1), '%Y-%m-%d')}/*.parquet',
-            's3://aemo/aemo/scada/data/Date={datetime.strftime(now - timedelta(days=2), '%Y-%m-%d')}/*.parquet'
+            's3://aemo/aemo/scada/data/Date={datetime.strftime(now - timedelta(days=2), '%Y-%m-%d')}/*.parquet',
+            's3://aemo/aemo/scada/data/Date={datetime.strftime(now - timedelta(days=3), '%Y-%m-%d')}/*.parquet',
+            's3://aemo/aemo/scada/data/Date={datetime.strftime(now - timedelta(days=4), '%Y-%m-%d')}/*.parquet',
+            's3://aemo/aemo/scada/data/Date={datetime.strftime(now - timedelta(days=5), '%Y-%m-%d')}/*.parquet',
+            's3://aemo/aemo/scada/data/Date={datetime.strftime(now - timedelta(days=6), '%Y-%m-%d')}/*.parquet'
             ] )
             group by all  
                   """)
