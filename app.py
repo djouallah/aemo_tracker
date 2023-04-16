@@ -33,7 +33,7 @@ def import_data():
             replace(min(stationame), '''', '') as stationame, min(DispatchType) as DispatchType
             from  parquet_scan('s3://aemo/aemo/duid/duid.parquet' ) group by all
                           """)
-  con.sql("""create or replace table scada as 
+  con.sql(f"""create or replace table scada as 
              Select SETTLEMENTDATE, DUID, MIN(SCADAVALUE) as mw
             from  parquet_scan('s3://aemo/aemo/scada/data/Date={cut_off}/*.parquet' )
             group by all  
