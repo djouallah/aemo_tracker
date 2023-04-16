@@ -16,9 +16,6 @@ col1, col2 = st.columns([1, 1])
 @st.cache_resource(ttl=10*60)
 def import_data():
   now = datetime.now(pytz.timezone('Australia/Brisbane'))
-  cut_off=datetime.strftime(now, '%Y-%m-%d')
-  yesterday = now - timedelta(days=1)
-  yesterday=datetime.strftime(yesterday, '%Y-%m-%d')
   s3_file_system = s3fs.S3FileSystem(
          key=  st.secrets["aws_access_key_id_secret"],
          secret= st.secrets["aws_secret_access_key_secret"] ,
@@ -38,7 +35,11 @@ def import_data():
                           """)
   con.sql(f"""create or replace table scada as 
              Select SETTLEMENTDATE, DUID, MIN(SCADAVALUE) as mw
-            from  parquet_scan(['s3://aemo/aemo/scada/data/Date={cut_off}/*.parquet','s3://aemo/aemo/scada/data/Date={yesterday}/*.parquet'] )
+            from  parquet_scan([
+            's3://aemo/aemo/scada/data/Date={datetime.strftime(now, '%Y-%m-%d')}/*.parquet',
+            's3://aemo/aemo/scada/data/Date={datetime.strftime(now - timedelta(days=1), '%Y-%m-%d')}/*.parquet',
+            's3://aemo/aemo/scada/data/Date={datetime.strftime(now - timedelta(days=2), '%Y-%m-%d')}/*.parquet'
+            ] )
             group by all  
                   """)
   return con
