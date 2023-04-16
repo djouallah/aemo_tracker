@@ -27,7 +27,7 @@ def import_data():
   fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./cache")
   con=duckdb.connect()
   con.register_filesystem(fs)
-  con.sql('PRAGMA disable_progress_bar')
+  con.sql('PRAGMA disable_progress_bar ; install httpfs; LOAD httpfs;')
   con.sql(""" create or replace table station as 
             Select DUID,min(Region) as Region,	min(trim(FuelSourceDescriptor)) as FuelSourceDescriptor ,
             replace(min(stationame), '''', '') as stationame, min(DispatchType) as DispatchType
