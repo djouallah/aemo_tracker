@@ -1,4 +1,5 @@
 import streamlit as st
+from datetime import datetime
 import duckdb 
 import altair as alt
 import s3fs
@@ -13,6 +14,7 @@ col1, col2 = st.columns([1, 1])
 
 @st.cache_resource(ttl=10*60)
 def import_data():
+  cut_off=datetime.strftime(datetime.now(pytz.timezone('Australia/Brisbane')), '%Y-%m-%d')
   s3_file_system = s3fs.S3FileSystem(
          key=  st.secrets["aws_access_key_id_secret"],
          secret= st.secrets["aws_secret_access_key_secret"] ,
@@ -32,7 +34,7 @@ def import_data():
                           """)
   con.sql("""create or replace table scada as 
              Select SETTLEMENTDATE, DUID, MIN(SCADAVALUE) as mw
-            from  parquet_scan('s3://aemo/aemo/scada/data/*/*.parquet' )
+            from  parquet_scan('s3://aemo/aemo/scada/data/Date={cut_off}/*.parquet' )
             group by all  
                   """)
   return con
