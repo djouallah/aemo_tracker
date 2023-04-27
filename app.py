@@ -41,7 +41,7 @@ def import_data():
                   """)
   return con
 ########################################################## Query the Data #####################################
-max_day = st.slider('Filter days', 0, nbr_days, 1)
+max_day = st.slider('Filter days', 0, nbr_days, 7)
 
 con = import_data()
 try :
@@ -59,9 +59,6 @@ try :
                             where stationame in ({filter}) and SETTLEMENTDATE >= '{datetime.strftime(now - timedelta(days=max_day), '%Y-%m-%d')}' 
                             group by all
                             ''').df() 
-        
-        
-        
         c = alt.Chart(results).mark_area().encode(x=alt.X('LOCALDATE:T', axis=alt.Axis(title="")), y='mw:Q',color='stationame:N',
                                             tooltip=['LOCALDATE','stationame','mw']).properties(
                                                 width=1200,
