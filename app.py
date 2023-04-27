@@ -12,10 +12,10 @@ st.set_page_config(
 )
 st.title("Australian Electricity Market")
 col1, col2 = st.columns([1, 1])
-
+nbr_days=7
 now = datetime.now(pytz.timezone('Australia/Brisbane'))
 @st.cache_resource(ttl=10*60)
-def import_data(max_day):
+def import_data():
   
   s3_file_system = s3fs.S3FileSystem(
          key=  st.secrets["aws_access_key_id_secret"],
@@ -34,7 +34,7 @@ def import_data(max_day):
             replace(min(stationame), '''', '') as stationame, min(DispatchType) as DispatchType
             from  parquet_scan('s3://aemo/aemo/duid/duid.parquet' ) group by all
                           """)
-  array_list_ls =[f" 's3://aemo/aemo/scada/data/Date={datetime.strftime(now - timedelta(days=x), '%Y-%m-%d')}/*.parquet' " for x in range(0, max_day) ]
+  array_list_ls =[f" 's3://aemo/aemo/scada/data/Date={datetime.strftime(now - timedelta(days=x), '%Y-%m-%d')}/*.parquet' " for x in range(0, nbr_days) ]
   array_list =", ".join(array_list_ls)
   con.sql(f"""create or replace table scada as 
              Select SETTLEMENTDATE, DUID, MIN(SCADAVALUE) as mw
@@ -42,8 +42,8 @@ def import_data(max_day):
                   """)
   return con
 ########################################################## Query the Data #####################################
-max_day = st.slider('Filter days', 0, 7, 1)
-con = import_data(max_day)
+max_day = st.slider('Filter days', 0, nbr_days, 7)
+con = import_data()
 try :
     station_list = con.sql(''' Select distinct stationame from  station
                                order by stationame''').df()
