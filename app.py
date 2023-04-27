@@ -12,7 +12,7 @@ st.set_page_config(
 )
 st.title("Australian Electricity Market")
 col1, col2 = st.columns([1, 1])
-nbr_days=7
+nbr_days=14
 now = datetime.now(pytz.timezone('Australia/Brisbane'))
 @st.cache_resource(ttl=10*60)
 def import_data():
@@ -42,7 +42,7 @@ def import_data():
                   """)
   return con
 ########################################################## Query the Data #####################################
-max_day = st.slider('Filter days', 0, nbr_days, 7)
+max_day = st.slider('Filter days', 0, nbr_days, nbr_days)
 con = import_data()
 try :
     station_list = con.sql(''' Select distinct stationame from  station
