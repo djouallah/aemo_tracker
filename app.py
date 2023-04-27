@@ -86,7 +86,7 @@ try :
     #localdate is just a stupid hack, Javascript read datetime as UTC not local time :(
 
     st.write(c)
-    st.write(con.sql('select count(*) as records fom scada').df())
+    st.write(con.sql('select count(*) as records from scada').df())
     ###########################################################Buttons and Links ####################################
     #Download Button
     col2.download_button(
