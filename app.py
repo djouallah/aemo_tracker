@@ -42,7 +42,7 @@ def import_data():
                   """)
   return con
 ########################################################## Query the Data #####################################
-max_day = st.slider('Filter days', 0, nbr_days, nbr_days)
+max_day = st.slider('Filter days', 0, nbr_days, 1)
 con = import_data()
 try :
     station_list = con.sql(''' Select distinct stationame from  station
