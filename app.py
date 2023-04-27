@@ -11,7 +11,7 @@ st.set_page_config(
 )
 st.title("Australian Electricity Market")
 col1, col2 = st.columns([1, 1])
-nbr_days=30
+nbr_days=32
 now = datetime.now(pytz.timezone('Australia/Brisbane'))
 @st.cache_resource(ttl=10*60)
 def import_data():
