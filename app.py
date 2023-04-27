@@ -13,7 +13,7 @@ st.title("Australian Electricity Market")
 col1, col2 = st.columns([1, 1])
 nbr_days=28
 now = datetime.now(pytz.timezone('Australia/Brisbane'))
-@st.cache_resource(ttl=10*60)
+#@st.cache_resource(ttl=10*60)
 def import_data():
   
   s3_file_system = s3fs.S3FileSystem(
