@@ -5,7 +5,6 @@ import pytz
 import altair as alt
 import s3fs
 from fsspec.implementations.cached import WholeFileCacheFileSystem
-
 st.set_page_config(
     page_title="Australian Electricity",
     page_icon="✅"
