@@ -13,9 +13,10 @@ st.set_page_config(
 st.title("Australian Electricity Market")
 col1, col2 = st.columns([1, 1])
 
+now = datetime.now(pytz.timezone('Australia/Brisbane'))
 @st.cache_resource(ttl=10*60)
-def import_data():
-  now = datetime.now(pytz.timezone('Australia/Brisbane'))
+def import_data(max_day):
+  
   s3_file_system = s3fs.S3FileSystem(
          key=  st.secrets["aws_access_key_id_secret"],
          secret= st.secrets["aws_secret_access_key_secret"] ,
@@ -33,22 +34,16 @@ def import_data():
             replace(min(stationame), '''', '') as stationame, min(DispatchType) as DispatchType
             from  parquet_scan('s3://aemo/aemo/duid/duid.parquet' ) group by all
                           """)
+  array_list_ls =[f" 's3://aemo/aemo/scada/data/Date={datetime.strftime(now - timedelta(days=x), '%Y-%m-%d')}/*.parquet' " for x in range(0, max_day) ]
+  array_list =", ".join(array_list_ls)
   con.sql(f"""create or replace table scada as 
              Select SETTLEMENTDATE, DUID, MIN(SCADAVALUE) as mw
-            from  parquet_scan([
-            's3://aemo/aemo/scada/data/Date={datetime.strftime(now, '%Y-%m-%d')}/*.parquet',
-            's3://aemo/aemo/scada/data/Date={datetime.strftime(now - timedelta(days=1), '%Y-%m-%d')}/*.parquet',
-            's3://aemo/aemo/scada/data/Date={datetime.strftime(now - timedelta(days=2), '%Y-%m-%d')}/*.parquet',
-            's3://aemo/aemo/scada/data/Date={datetime.strftime(now - timedelta(days=3), '%Y-%m-%d')}/*.parquet',
-            's3://aemo/aemo/scada/data/Date={datetime.strftime(now - timedelta(days=4), '%Y-%m-%d')}/*.parquet',
-            's3://aemo/aemo/scada/data/Date={datetime.strftime(now - timedelta(days=5), '%Y-%m-%d')}/*.parquet',
-            's3://aemo/aemo/scada/data/Date={datetime.strftime(now - timedelta(days=6), '%Y-%m-%d')}/*.parquet'
-            ] )
-            group by all  
+            from  parquet_scan([{array_list}])  group by all  
                   """)
   return con
 ########################################################## Query the Data #####################################
-con = import_data()
+max_day = st.slider('Filter days', 0, 7, 1)
+con = import_data(max_day)
 try :
     station_list = con.sql(''' Select distinct stationame from  station
                                order by stationame''').df()
@@ -61,7 +56,8 @@ try :
         results= con.sql(f''' Select SETTLEMENTDATE,(SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE,stationame,sum(mw) as mw from  scada
                             inner join station
                             on scada.DUID = station.DUID
-                            where stationame in ({filter}) group by all
+                            where stationame in ({filter}) and SETTLEMENTDATE >= '{datetime.strftime(now - timedelta(days=max_day), '%Y-%m-%d')}' 
+                            group by all
                             ''').df() 
         
         
@@ -75,6 +71,7 @@ try :
         results= con.sql(f''' Select date_trunc('hour',SETTLEMENTDATE) as day,FuelSourceDescriptor,sum(mw)/12 as mwh from  scada
                             inner join station
                             on scada.DUID = station.DUID
+                            where SETTLEMENTDATE >= '{datetime.strftime(now - timedelta(days=max_day), '%Y-%m-%d')}'
                             group by all
                             ''').df() 
         c = alt.Chart(results).mark_area().encode( x=alt.X('day:N', axis=alt.Axis(labels=False,title="")), y='mwh:Q',color='FuelSourceDescriptor:N',
