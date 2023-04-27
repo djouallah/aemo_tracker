@@ -31,7 +31,7 @@ def import_data():
   con.sql(""" create or replace table station as 
             Select DUID,min(Region) as Region,	min(trim(FuelSourceDescriptor)) as FuelSourceDescriptor ,
             replace(min(stationame), '''', '') as stationame, min(DispatchType) as DispatchType
-            from  parquet_scan('s3://aemo/aemo/duid/duid.parquet' ) group by all
+            from  parquet_scan('s3://aemo/aemo/duid/*.parquet' ) group by all
                           """)
   array_list_ls =[f" 's3://aemo/aemo/scada/data/Date={datetime.strftime(now - timedelta(days=x), '%Y-%m-%d')}/*.parquet' " for x in range(0, nbr_days) ]
   array_list =", ".join(array_list_ls)
