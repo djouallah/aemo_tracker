@@ -26,9 +26,9 @@ def import_data():
       listings_expiry_time = 10
       )
   fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./cache")
-  if(os.path.isfile("db1")):
-    os.remove("db1")
-  con=duckdb.connect('db1')
+  if(os.path.isfile("db")):
+    os.remove("db")
+  con=duckdb.connect('db')
   con.register_filesystem(fs)
   con.sql('PRAGMA disable_progress_bar ; install httpfs; LOAD httpfs;')
   con.sql(""" create or replace table station as 
@@ -42,8 +42,6 @@ def import_data():
              Select SETTLEMENTDATE, DUID, MIN(SCADAVALUE) as mw
             from  parquet_scan([{array_list}])  group by all  
                   """)
-  ################ only if the update works then swap the database otherwise keep the old data, old data is better than a broken app
-  os.rename('db1', 'db')
   return "done"
 ########################################################## Query the Data #####################################
 max_day = st.slider('Filter days', 0, nbr_days, 7)
