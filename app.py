@@ -77,15 +77,15 @@ try :
                                                 tooltip=['day','FuelSourceDescriptor','mwh']).properties(
                                                     width=1200,
                                                     height=400)
-    #max= con.sql('''select strftime(max(SETTLEMENTDATE), '%A, %-d %B %Y - %I:%M:%S %p') as max from scada''').fetchone()
-    #st.write(max)
-    #st.subheader("Latest Updated: " + str(max[['test']].values[0][0]))
+    max= con.sql('''select strftime(max(SETTLEMENTDATE), '%A, %-d %B %Y - %I:%M:%S %p') as max from scada''').fetchone()
+    st.write(max)
+    st.subheader("Latest Updated: " + str(max[['test']].values[0][0]))
 
     ############################################################# Visualisation ####################################
     #localdate is just a stupid hack, Javascript read datetime as UTC not local time :(
 
     st.write(c)
-    st.write(con.sql('select count(*) as total_records from scada').df())
+    #st.write(con.sql('select count(*) as total_records from scada').df())
     ###########################################################Buttons and Links ####################################
     #Download Button
     col2.download_button(
