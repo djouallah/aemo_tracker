@@ -1,2 +1,2 @@
-duckdb>=0.7.2.dev267
+duckdb
 s3fs
