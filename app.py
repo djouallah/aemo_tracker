@@ -58,7 +58,7 @@ try :
         results= con.sql(f''' Select SETTLEMENTDATE,(SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE,stationame,sum(mw) as mw from  scada
                             inner join station
                             on scada.DUID = station.DUID
-                            where stationame in ({filter}) and (SETTLEMENTDATE - INTERVAL 10 HOUR) >= '{datetime.strftime(now - timedelta(days=max_day), '%Y-%m-%d')}' 
+                            where stationame in ({filter}) and SETTLEMENTDATE >= '{datetime.strftime(now - timedelta(days=max_day), '%Y-%m-%d')}' 
                             group by all
                             ''').df() 
         c = alt.Chart(results).mark_area().encode(x=alt.X('LOCALDATE:T', axis=alt.Axis(title="")), y='mw:Q',color='stationame:N',
@@ -70,7 +70,7 @@ try :
         results= con.sql(f''' Select date_trunc('hour',SETTLEMENTDATE) as day,FuelSourceDescriptor,sum(mw)/12 as mwh from  scada
                             inner join station
                             on scada.DUID = station.DUID
-                            where (SETTLEMENTDATE - INTERVAL 10 HOUR) >= '{datetime.strftime(now - timedelta(days=max_day), '%Y-%m-%d')}'
+                            where SETTLEMENTDATE >= '{datetime.strftime(now - timedelta(days=max_day), '%Y-%m-%d')}'
                             group by all
                             ''').df() 
         c = alt.Chart(results).mark_area().encode( x=alt.X('day:N', axis=alt.Axis(labels=False,title="")), y='mwh:Q',color='FuelSourceDescriptor:N',
