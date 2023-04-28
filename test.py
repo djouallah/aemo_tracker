@@ -26,7 +26,8 @@ def import_data():
       listings_expiry_time = 10
       )
   fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./cache")
-  os.remove("db")
+  if(os.path.isfile("db")):
+    os.remove("db")
   con=duckdb.connect('db')
   con.register_filesystem(fs)
   con.sql('PRAGMA disable_progress_bar ; install httpfs; LOAD httpfs;')
