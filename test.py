@@ -4,6 +4,7 @@ import duckdb
 import pytz
 import altair as alt
 import s3fs
+import os
 from fsspec.implementations.cached import WholeFileCacheFileSystem
 st.set_page_config(
     page_title="Australian Electricity",
@@ -25,6 +26,7 @@ def import_data():
       listings_expiry_time = 10
       )
   fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./cache")
+  os.remove("db")
   con=duckdb.connect('db')
   con.register_filesystem(fs)
   con.sql('PRAGMA disable_progress_bar ; install httpfs; LOAD httpfs;')
