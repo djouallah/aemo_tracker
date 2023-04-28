@@ -98,3 +98,4 @@ try :
     con = import_data()
 except:
     st.write('first run will take time')
+    con = import_data()
