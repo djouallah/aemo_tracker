@@ -55,27 +55,27 @@ try :
     filter =  "'"+xxxx+"'" 
     if len(DUID_Select) != 0 :
         
-        results= con.sql(f''' Select SETTLEMENTDATE,(SETTLEMENTDATE - INTERVAL 10 HOUR) as LOCALDATE,stationame,sum(mw) as mw from  scada
+        results= con.sql(f''' Select SETTLEMENTDATE,(SETTLEMENTDATE - INTERVAL 10 HOUR) as UTC,stationame,sum(mw) as mw from  scada
                             inner join station
                             on scada.DUID = station.DUID
                             where stationame in ({filter}) and SETTLEMENTDATE >= '{datetime.strftime(now - timedelta(days=max_day), '%Y-%m-%d')}' 
                             group by all
                             ''').df() 
-        c = alt.Chart(results).mark_area().encode(x=alt.X('LOCALDATE:T', axis=alt.Axis(title="")), y='mw:Q',color='stationame:N',
-                                            tooltip=['LOCALDATE','stationame','mw']).properties(
+        c = alt.Chart(results).mark_area().encode(x=alt.X('UTC:T', axis=alt.Axis(title="")), y='mw:Q',color='stationame:N',
+                                            tooltip=['SETTLEMENTDATE','stationame','mw']).properties(
                                                 width=1200,
                                                 height=400)
         
     else:
-        results= con.sql(f''' Select date_trunc('hour',(SETTLEMENTDATE - INTERVAL 10 HOUR)) as day,date_trunc('hour',SETTLEMENTDATE) as SETTLEMENTDATE,
+        results= con.sql(f''' Select date_trunc('hour',(SETTLEMENTDATE - INTERVAL 10 HOUR)) as UTC,date_trunc('hour',SETTLEMENTDATE) as SETTLEMENTDATE,
                             FuelSourceDescriptor,sum(mw)/12 as mwh from  scada
                             inner join station
                             on scada.DUID = station.DUID
                             where SETTLEMENTDATE >= '{datetime.strftime(now - timedelta(days=max_day), '%Y-%m-%d')}'
                             group by all
                             ''').df() 
-        c = alt.Chart(results).mark_area().encode( x=alt.X('day:N', axis=alt.Axis(labels=False,title="")), y='mwh:Q',color='FuelSourceDescriptor:N',
-                                                tooltip=['day','FuelSourceDescriptor','mwh']).properties(
+        c = alt.Chart(results).mark_area().encode( x=alt.X('UTC:N', axis=alt.Axis(labels=False,title="")), y='mwh:Q',color='FuelSourceDescriptor:N',
+                                                tooltip=['SETTLEMENTDATE','FuelSourceDescriptor','mwh']).properties(
                                                     width=1200,
                                                     height=400)
     max= con.sql('''select strftime(max(SETTLEMENTDATE), '%A, %-d %B %Y - %I:%M:%S %p') as max from scada''').fetchone()
