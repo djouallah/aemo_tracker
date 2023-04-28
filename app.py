@@ -74,7 +74,7 @@ try :
                             where SETTLEMENTDATE >= '{datetime.strftime(now - timedelta(days=max_day), '%Y-%m-%d')}'
                             group by all
                             ''').df() 
-        c = alt.Chart(results).mark_area().encode( x=alt.X('UTC:N', axis=alt.Axis(labels=False,title="")), y='mwh:Q',color='FuelSourceDescriptor:N',
+        c = alt.Chart(results).mark_area().encode( x=alt.X('UTC:T', axis=alt.Axis(title="")), y='mwh:Q',color='FuelSourceDescriptor:N',
                                                 tooltip=['SETTLEMENTDATE','FuelSourceDescriptor','mwh']).properties(
                                                     width=1200,
                                                     height=400)
