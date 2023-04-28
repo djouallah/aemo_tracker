@@ -26,8 +26,7 @@ def import_data():
       listings_expiry_time = 10
       )
   fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./cache")
-  if(os.path.isfile("db")):
-    os.remove("db")
+  
   con=duckdb.connect('db')
   con.register_filesystem(fs)
   con.sql('PRAGMA disable_progress_bar ; install httpfs; LOAD httpfs;')
@@ -42,7 +41,6 @@ def import_data():
              Select SETTLEMENTDATE, DUID, MIN(SCADAVALUE) as mw
             from  parquet_scan([{array_list}])  group by all  
                   """)
-  st.write(os.path.getsize("db"))
   return con
 ########################################################## Query the Data #####################################
 max_day = st.slider('Filter days', 0, nbr_days, 7)
