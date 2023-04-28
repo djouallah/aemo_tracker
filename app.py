@@ -42,6 +42,7 @@ def import_data():
              Select SETTLEMENTDATE, DUID, MIN(SCADAVALUE) as mw
             from  parquet_scan([{array_list}])  group by all  
                   """)
+  ################ only if the update works then swap the database otherwise keep the old data, old data is better than a broken app
   os.rename('db1', 'db')
   return "done"
 ########################################################## Query the Data #####################################
