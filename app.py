@@ -77,8 +77,8 @@ try :
                                                 tooltip=['day','FuelSourceDescriptor','mwh']).properties(
                                                     width=1200,
                                                     height=400)
-    max= con.sql('''select strftime(max(SETTLEMENTDATE), '%A, %-d %B %Y - %I:%M:%S %p') as max from scada''').fetchone()
-    st.write(max)
+    #max= con.sql('''select strftime(max(SETTLEMENTDATE), '%A, %-d %B %Y - %I:%M:%S %p') as max from scada''').fetchone()
+    #st.write(max)
     #st.subheader("Latest Updated: " + str(max[['test']].values[0][0]))
 
     ############################################################# Visualisation ####################################
