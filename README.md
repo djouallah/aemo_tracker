@@ -14,4 +14,5 @@ Hosted in cloudflare R2
 hosted in streamlit cloud free edition, DuckDB query Cloudflare R2 using fsspec and cache the data locally, the Visual interaction is very fast as all the data is loaded into memory.
 
 # Bottleneck 
-The data in Streamlit is refreshed from the remote storage every 10 minutes, currently it take around 10 second, you can’t interact with the app when the refresh is happening, it would have being nice if it was a background operation. 
+Downloading data is still very slow from R2
+DuckDB does not support vacuum, the database file size keep increasing
