@@ -76,7 +76,7 @@ try :
                             ''').df() 
         
         selection = alt.selection_multi(fields=['FuelSourceDescriptor'], bind='legend')
-        c = alt.Chart(results).mark_bar().encode( x=alt.X('UTC:T', axis=alt.Axis(title="")),
+        c = alt.Chart(results).mark_area().encode( x=alt.X('UTC:T', axis=alt.Axis(title="")),
                                                    y='mwh:Q',
                                                    color='FuelSourceDescriptor:N',
                                                   opacity=alt.condition(selection, alt.value(1), alt.value(0.2)),
