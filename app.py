@@ -74,10 +74,15 @@ try :
                             where SETTLEMENTDATE >= '{datetime.strftime(now - timedelta(days=max_day), '%Y-%m-%d')}'
                             group by all
                             ''').df() 
+        
+        selection = alt.selection_multi(fields=['FuelSourceDescriptor:N'], bind='legend')
         c = alt.Chart(results).mark_area().encode( x=alt.X('UTC:T', axis=alt.Axis(title="")), y='mwh:Q',color='FuelSourceDescriptor:N',
+                                                  opacity=alt.condition(selection, alt.value(1), alt.value(0.2)),
                                                 tooltip=['SETTLEMENTDATE','FuelSourceDescriptor','mwh']).properties(
                                                     width=1200,
-                                                    height=400)
+                                                    height=400).add_selection(
+                                                             selection
+                                                      )
     max= con.sql('''select strftime(max(SETTLEMENTDATE), '%A, %-d %B %Y - %I:%M:%S %p') as max from scada''').fetchone()
     st.write(max)
     #st.subheader("Latest Updated: " + str(max[['test']].values[0][0]))
