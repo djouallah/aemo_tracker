@@ -12,7 +12,6 @@ st.set_page_config(
 )
 st.title("Australian Electricity Market")
 col1, col2 = st.columns([1, 1])
-nbr_days=34
 now = datetime.now(pytz.timezone('Australia/Brisbane'))
 @st.cache_resource(ttl=5*60)
 def import_data():
@@ -35,15 +34,12 @@ def import_data():
             replace(min(stationame), '''', '') as stationame, min(DispatchType) as DispatchType
             from  parquet_scan('s3://aemo/aemo/duid/*.parquet' ) group by all
                           """)
-  array_list_ls =[f" 's3://aemo/aemo/scada/data/Date={datetime.strftime(now - timedelta(days=x), '%Y-%m-%d')}/*.parquet' " for x in range(0, nbr_days) ]
-  array_list =", ".join(array_list_ls)
-  con.sql(f"""create or replace table scada as 
-             Select SETTLEMENTDATE, DUID, MIN(SCADAVALUE) as mw, mw/12 as mwh
-            from  parquet_scan([{array_list}])  group by all  
+  con.sql("""create or replace table scada as Select SETTLEMENTDATE, DUID, MIN(SCADAVALUE) as mw, mw/12 as mwh
+            from  parquet_scan('s3://aemo/aemo/scada/data/*/*.parquet')  group by all  
                   """)
   return con
 ########################################################## Query the Data #####################################
-max_day = st.slider('Filter days', 0, nbr_days, 7)
+max_day = st.slider('Filter days', 0, 60, 7)
 
 con=duckdb.connect('db')
 try :
