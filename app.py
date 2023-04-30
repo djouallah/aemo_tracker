@@ -12,7 +12,7 @@ st.set_page_config(
 )
 st.title("Australian Electricity Market")
 col1, col2 = st.columns([1, 1])
-nbr_days=34
+nbr_days=33
 now = datetime.now(pytz.timezone('Australia/Brisbane'))
 @st.cache_resource(ttl=5*60)
 def import_data():
@@ -67,11 +67,7 @@ try :
                                                 height=400)
         
     else:
-        if max_day <= 7 :
-            details='minutes'
-        else:
-            details='hour'
-        results= con.sql(f''' Select date_trunc('{details}',(SETTLEMENTDATE - INTERVAL 10 HOUR)) as UTC,date_trunc('{details}',SETTLEMENTDATE) as SETTLEMENTDATE,
+        results= con.sql(f''' Select date_trunc('hour',(SETTLEMENTDATE - INTERVAL 10 HOUR)) as UTC,date_trunc('hour',SETTLEMENTDATE) as SETTLEMENTDATE,
                             FuelSourceDescriptor,sum(mw)/12 as mwh from  scada
                             inner join station
                             on scada.DUID = station.DUID
@@ -97,7 +93,7 @@ try :
     #localdate is just a stupid hack, Javascript read datetime as UTC not local time :(
 
     st.write(c)
-    #st.write(con.sql('select count(*) as total_records from scada').df())
+    
     ###########################################################Buttons and Links ####################################
     #Download Button
     col2.download_button(
@@ -110,6 +106,7 @@ try :
     link='[for a Full experience go to Nemtracker Dashboard](https://datastudio.google.com/reporting/1Fah7mn1X9itiFAMIvCFkj_tEYXHdxAll/page/TyK1)'
     col1.markdown(link,unsafe_allow_html=True)
     con = import_data()
+    st.write(con.sql('select count(*) as total_records from scada').df())
 except:
     st.write('first run will take time')
     con =import_data()
