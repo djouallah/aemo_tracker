@@ -67,11 +67,11 @@ try :
                                                 height=400)
         
     else:
-        if max_day <= 2 :
+        if max_day <= 7 :
             details='minutes'
         else:
             details='hour'
-        results= con.sql(f''' Select date_trunc('{details}',(SETTLEMENTDATE - INTERVAL 10 HOUR)) as UTC,date_trunc('hour',SETTLEMENTDATE) as SETTLEMENTDATE,
+        results= con.sql(f''' Select date_trunc('{details}',(SETTLEMENTDATE - INTERVAL 10 HOUR)) as UTC,date_trunc('{details}',SETTLEMENTDATE) as SETTLEMENTDATE,
                             FuelSourceDescriptor,sum(mw)/12 as mwh from  scada
                             inner join station
                             on scada.DUID = station.DUID
