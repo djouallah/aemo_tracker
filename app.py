@@ -38,7 +38,7 @@ def import_data():
   array_list_ls =[f" 's3://aemo/aemo/scada/data/Date={datetime.strftime(now - timedelta(days=x), '%Y-%m-%d')}/*.parquet' " for x in range(0, nbr_days) ]
   array_list =", ".join(array_list_ls)
   con.sql(f"""create or replace table scada as 
-             Select SETTLEMENTDATE, DUID, MIN(SCADAVALUE) as mw
+             Select SETTLEMENTDATE, DUID, MIN(SCADAVALUE) as mw, mw/12 as mwh
             from  parquet_scan([{array_list}])  group by all  
                   """)
   return con
@@ -68,7 +68,7 @@ try :
         
     else:
         results= con.sql(f''' Select date_trunc('hour',(SETTLEMENTDATE - INTERVAL 10 HOUR)) as UTC,date_trunc('hour',SETTLEMENTDATE) as SETTLEMENTDATE,
-                            FuelSourceDescriptor,sum(mw)/12 as mwh from  scada
+                            FuelSourceDescriptor,sum(mwh) as mwh from  scada
                             inner join station
                             on scada.DUID = station.DUID
                             where SETTLEMENTDATE >= '{datetime.strftime(now - timedelta(days=max_day), '%Y-%m-%d')}'
