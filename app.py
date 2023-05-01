@@ -106,6 +106,8 @@ try :
     if duration > 1 :
      st.write('total import duration: '+str(duration))
      st.write(con.sql('select count(*) as total_records from scada').df())
+    import glob
+    st.write(glob.glob("*"))
 except:
     st.write('first run will take time')
     con =import_data()
