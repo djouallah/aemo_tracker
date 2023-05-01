@@ -28,8 +28,17 @@ def import_data():
   fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./cache")
   
   con=duckdb.connect('db')
-  con.register_filesystem(s3_file_system)
-  con.sql('PRAGMA disable_progress_bar ; install httpfs; LOAD httpfs;')
+  #con.register_filesystem(s3_file_system)
+  con.sql(f'''
+          PRAGMA disable_progress_bar ;
+          install httpfs;
+          LOAD httpfs;
+          SET enable_http_metadata_cache=true ;
+          set s3_region = 'auto';
+          set s3_access_key_id = "{st.secrets["aws_access_key_id_secret"]}" ;
+          set s3_secret_access_key = '{st.secrets["aws_secret_access_key_secret"] }';
+          set s3_endpoint = '{st.secrets["endpoint_url_secret"].replace("https://", "")}'  
+          ''')
   con.sql(""" create or replace table station as 
             Select DUID,min(Region) as Region,	min(trim(FuelSourceDescriptor)) as FuelSourceDescriptor ,
             replace(min(stationame), '''', '') as stationame, min(DispatchType) as DispatchType
