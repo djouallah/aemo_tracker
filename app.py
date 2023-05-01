@@ -46,19 +46,19 @@ try :
     filter =  "'"+xxxx+"'" 
     if len(DUID_Select) != 0 :
         
-        results= con.sql(f''' Select SETTLEMENTDATE,(SETTLEMENTDATE - INTERVAL 10 HOUR) as UTC,stationame,sum(mw) as mw from  scada
+        results= con.sql(f''' Select SETTLEMENTDATE,(SETTLEMENTDATE - INTERVAL 10 HOUR) as date,stationame,sum(mw) as mw from  scada
                             inner join station
                             on scada.DUID = station.DUID
                             where stationame in ({filter}) and SETTLEMENTDATE >= '{datetime.strftime(now - timedelta(days=max_day), '%Y-%m-%d')}' 
                             group by all
                             ''').df() 
-        c = alt.Chart(results).mark_area().encode(x=alt.X('UTC:T', axis=alt.Axis(title="")), y='mw:Q',color='stationame:N',
-                                            tooltip=[alt.Tooltip("UTC:T", format="%Y-%b-%d %H %p"), 'stationame','mw']).properties(
+        c = alt.Chart(results).mark_area().encode(x=alt.X('date:T', axis=alt.Axis(title="")), y='mw:Q',color='stationame:N',
+                                            tooltip=[alt.Tooltip("date:T", format="%Y-%b-%d %H %p"), 'stationame','mw']).properties(
                                                 width=1200,
                                                 height=400)
         
     else:
-        results= con.sql(f''' Select date_trunc('hour',(SETTLEMENTDATE - INTERVAL 10 HOUR)) as UTC,date_trunc('hour',SETTLEMENTDATE) as SETTLEMENTDATE,
+        results= con.sql(f''' Select date_trunc('hour',(SETTLEMENTDATE - INTERVAL 10 HOUR)) as date,date_trunc('hour',SETTLEMENTDATE) as SETTLEMENTDATE,
                             FuelSourceDescriptor,sum(mwh) as mwh from  scada
                             inner join station
                             on scada.DUID = station.DUID
@@ -67,11 +67,11 @@ try :
                             ''').df() 
         
         selection = alt.selection_multi(fields=['FuelSourceDescriptor'], bind='legend')
-        c = alt.Chart(results).mark_area().encode( x=alt.X('UTC:T', axis=alt.Axis(title="")),
+        c = alt.Chart(results).mark_area().encode( x=alt.X('date:T', axis=alt.Axis(title="")),
                                                    y='mwh:Q',
                                                    color='FuelSourceDescriptor:N',
                                                   opacity=alt.condition(selection, alt.value(1), alt.value(0)),
-                                                  tooltip=[alt.Tooltip("UTC:T", format="%Y-%b-%d %H %p"), 'FuelSourceDescriptor','mwh']).properties(
+                                                  tooltip=[alt.Tooltip("date:T", format="%Y-%b-%d %H %p"), 'FuelSourceDescriptor','mwh']).properties(
                                                     width=1200,
                                                     height=400).add_selection(
                                                              selection
