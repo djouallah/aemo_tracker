@@ -103,7 +103,8 @@ try :
     con = import_data()
     stop = time.time()
     duration = stop-start
-    st.write(duration)
+    if duration > 1 :
+     st.write('total import duration'+str(duration))
     st.write(con.sql('select count(*) as total_records from scada').df())
 except:
     st.write('first run will take time')
