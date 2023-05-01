@@ -53,7 +53,7 @@ try :
                             group by all
                             ''').df() 
         c = alt.Chart(results).mark_area().encode(x=alt.X('UTC:T', axis=alt.Axis(title="")), y='mw:Q',color='stationame:N',
-                                            tooltip=['UTC','stationame','mw']).properties(
+                                            tooltip=[alt.Tooltip("UTC:T", format="%Y-%b-%d %H %p"), 'stationame','mw']).properties(
                                                 width=1200,
                                                 height=400)
         
