@@ -24,7 +24,7 @@ def import_data():
          } ,
       listings_expiry_time = 5*60
       )
-  fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./cache")
+  fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_check=5*60,cache_storage="./cache")
   
   con=duckdb.connect()
   con.register_filesystem(fs)
