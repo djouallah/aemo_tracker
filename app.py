@@ -40,6 +40,7 @@ def import_data():
   return con
 ########################################################## Query the Data #####################################
 max_day = st.slider('Filter days', 0, 60, 7)
+con = import_data()
 try :
     station_list = con.sql(''' Select distinct stationame from  station
                                order by stationame''').df()
@@ -97,7 +98,6 @@ try :
     
     link='[for a Full experience go to Nemtracker Dashboard](https://datastudio.google.com/reporting/1Fah7mn1X9itiFAMIvCFkj_tEYXHdxAll/page/TyK1)'
     col1.markdown(link,unsafe_allow_html=True)
-    con = import_data()
     st.write(con.sql('select count(*) as total_records from scada').df())
 except:
     st.write('first run will take time')
