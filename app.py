@@ -3,10 +3,8 @@ from datetime import datetime , timedelta
 import duckdb 
 import pytz
 import altair as alt
-import s3fs
 import os
 import time
-from fsspec.implementations.cached import WholeFileCacheFileSystem
 st.set_page_config(
     page_title="Australian Electricity",
     page_icon="✅"
@@ -16,19 +14,7 @@ col1, col2 = st.columns([1, 1])
 now = datetime.now(pytz.timezone('Australia/Brisbane'))
 @st.cache_resource(ttl=5*60)
 def import_data():
-  
-  s3_file_system = s3fs.S3FileSystem(
-         key=  st.secrets["aws_access_key_id_secret"],
-         secret= st.secrets["aws_secret_access_key_secret"] ,
-         client_kwargs={
-            'endpoint_url': st.secrets["endpoint_url_secret"] 
-         } ,
-      listings_expiry_time = 10
-      )
-  fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./cache")
-  
   con=duckdb.connect('db')
-  #con.register_filesystem(s3_file_system)
   con.sql(f'''
           PRAGMA disable_progress_bar ;
           install httpfs;
