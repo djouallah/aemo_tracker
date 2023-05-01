@@ -12,14 +12,13 @@ st.set_page_config(
 st.title("Australian Electricity Market")
 col1, col2 = st.columns([1, 1])
 now = datetime.now(pytz.timezone('Australia/Brisbane'))
-################################## Data import from Cloudflare R2#########################
+################################## Data import from Cloudflare R2###########################################
 @st.cache_resource(ttl=5*60)
 def import_data():
   con=duckdb.connect('db')
   con.sql(f'''
           PRAGMA disable_progress_bar ;
-          install httpfs;
-          LOAD httpfs;
+          install httpfs;LOAD httpfs;
           SET enable_http_metadata_cache=true ;
           set s3_region = 'auto';
           set s3_access_key_id = "{st.secrets["aws_access_key_id_secret"]}" ;
@@ -35,7 +34,7 @@ def import_data():
             from  parquet_scan('s3://aemo/aemo/scada/data/*/*.parquet')  group by all  
                   """)
   return con
-########################################################## Query the Data #####################################
+########################################################## Query the Data ###################################
 max_day = st.slider('Filter days', 0, 60, 7)
 con=duckdb.connect('db')
 try :
