@@ -5,8 +5,7 @@ import pytz
 import altair as alt
 import s3fs
 import os
-import time
-from fsspec.implementations.cached import WholeFileCacheFileSystem
+from fsspec.implementations.cached import SimpleCacheFileSystem
 st.set_page_config(
     page_title="Australian Electricity",
     page_icon="✅"
@@ -25,9 +24,9 @@ def import_data():
          } ,
       listings_expiry_time = 10
       )
-  fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_storage="./cache")
+  fs = SimpleCacheFileSystem(fs=s3_file_system,cache_storage="./cache")
   
-  con=duckdb.connect('db')
+  con=duckdb.connect()
   con.register_filesystem(fs)
   con.sql('PRAGMA disable_progress_bar ; install httpfs; LOAD httpfs;')
   con.sql(""" create or replace table station as 
@@ -41,7 +40,7 @@ def import_data():
   return con
 ########################################################## Query the Data #####################################
 max_day = st.slider('Filter days', 0, 60, 7)
-con=duckdb.connect('db')
+con = import_data()
 try :
     station_list = con.sql(''' Select distinct stationame from  station
                                order by stationame''').df()
@@ -99,13 +98,8 @@ try :
     
     link='[for a Full experience go to Nemtracker Dashboard](https://datastudio.google.com/reporting/1Fah7mn1X9itiFAMIvCFkj_tEYXHdxAll/page/TyK1)'
     col1.markdown(link,unsafe_allow_html=True)
-    start = time.time()
-    con = import_data()
-    stop = time.time()
-    duration = round(stop-start,2)
-    if duration > 1 :
-     st.write('total import duration: '+str(duration))
-     st.write(con.sql('select count(*) as total_records from scada').df())
+    
+    st.write(con.sql('select count(*) as total_records from scada').df())
 except:
     st.write('first run will take time')
     con =import_data()
