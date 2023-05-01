@@ -22,9 +22,9 @@ def import_data():
          client_kwargs={
             'endpoint_url': st.secrets["endpoint_url_secret"] 
          } ,
-      listings_expiry_time = 5*60
+      listings_expiry_time = 10
       )
-  fs = SimpleCacheFileSystem(fs=s3_file_system,cache_check=5*60,cache_storage="./cache")
+  fs = SimpleCacheFileSystem(fs=s3_file_system,cache_storage="./cache")
   
   con=duckdb.connect()
   con.register_filesystem(fs)
