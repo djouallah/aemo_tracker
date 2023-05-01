@@ -24,7 +24,7 @@ def import_data():
           set s3_region = 'auto';
           set s3_access_key_id = "{st.secrets["aws_access_key_id_secret"]}" ;
           set s3_secret_access_key = '{st.secrets["aws_secret_access_key_secret"] }';
-          set s3_endpoint = '{st.secrets["endpoint_url_secret"].replace("https://", "")}'  
+          set s3_endpoint = '{st.secrets["endpoint_url_secret"]}'  
           ''')
   con.sql(""" create or replace table station as 
             Select DUID,min(Region) as Region,	min(trim(FuelSourceDescriptor)) as FuelSourceDescriptor ,
