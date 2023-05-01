@@ -41,7 +41,6 @@ def import_data():
   return con
 ########################################################## Query the Data #####################################
 max_day = st.slider('Filter days', 0, 60, 7)
-start = time.time()
 con=duckdb.connect('db')
 try :
     station_list = con.sql(''' Select distinct stationame from  station
@@ -100,6 +99,7 @@ try :
     
     link='[for a Full experience go to Nemtracker Dashboard](https://datastudio.google.com/reporting/1Fah7mn1X9itiFAMIvCFkj_tEYXHdxAll/page/TyK1)'
     col1.markdown(link,unsafe_allow_html=True)
+    start = time.time()
     con = import_data()
     stop = time.time()
     duration = stop-start
