@@ -12,6 +12,7 @@ st.set_page_config(
 st.title("Australian Electricity Market")
 col1, col2 = st.columns([1, 1])
 now = datetime.now(pytz.timezone('Australia/Brisbane'))
+################################## Data import from Cloudflare R2#########################
 @st.cache_resource(ttl=5*60)
 def import_data():
   con=duckdb.connect('db')
