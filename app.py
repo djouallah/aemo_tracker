@@ -71,7 +71,7 @@ try :
                                                    y='mwh:Q',
                                                    color='FuelSourceDescriptor:N',
                                                   opacity=alt.condition(selection, alt.value(1), alt.value(0)),
-                                                tooltip=['UTC:T','FuelSourceDescriptor','mwh']).properties(
+                                                  alt.Tooltip("UTC:T", format="%Y-%m-%dT%H"), 'FuelSourceDescriptor','mwh']).properties(
                                                     width=1200,
                                                     height=400).add_selection(
                                                              selection
