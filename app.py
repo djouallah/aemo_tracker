@@ -5,7 +5,7 @@ import pytz
 import altair as alt
 import s3fs
 import os
-from fsspec.implementations.cached import WholeFileCacheFileSystem
+from fsspec.implementations.cached import SimpleCacheFileSystem
 st.set_page_config(
     page_title="Australian Electricity",
     page_icon="✅"
@@ -24,7 +24,7 @@ def import_data():
          } ,
       listings_expiry_time = 5*60
       )
-  fs = WholeFileCacheFileSystem(fs=s3_file_system,cache_check=5*60,cache_storage="./cache")
+  fs = SimpleCacheFileSystem(fs=s3_file_system,cache_check=5*60,cache_storage="./cache")
   
   con=duckdb.connect()
   con.register_filesystem(fs)
