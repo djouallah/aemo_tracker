@@ -102,7 +102,7 @@ try :
     start = time.time()
     con = import_data()
     stop = time.time()
-    duration = round(stop-start,0)
+    duration = round(stop-start,2)
     if duration > 1 :
      st.write('total import duration: '+str(duration))
      st.write(con.sql('select count(*) as total_records from scada').df())
