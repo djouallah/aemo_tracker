@@ -51,7 +51,7 @@ try :
                             group by all
                             ''').df() 
         c = alt.Chart(results).mark_area().encode(x=alt.X('date:T', axis=alt.Axis(title="")), y='mw:Q',color='stationame:N',
-                                            tooltip=[alt.Tooltip("date:T", format="%Y-%b-%d %I%p"), 'stationame','mw']).properties(
+                                            tooltip=[alt.Tooltip("date:T", format="%Y-%b-%d %I:%-M%p"), 'stationame','mw']).properties(
                                                 width=1200,
                                                 height=400)
         
