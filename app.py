@@ -51,7 +51,7 @@ try :
                             group by all
                             ''').df() 
         c = alt.Chart(results).mark_area().encode(x=alt.X('date:T', axis=alt.Axis(title="")), y='mw:Q',color='stationame:N',
-                                            tooltip=[alt.Tooltip("date:T", format="%Y-%b-%d %I %p"), 'stationame','mw']).properties(
+                                            tooltip=[alt.Tooltip("date:T", format="%Y-%b-%d %I%p"), 'stationame','mw']).properties(
                                                 width=1200,
                                                 height=400)
         
@@ -69,7 +69,7 @@ try :
                                                    y='mwh:Q',
                                                    color='FuelSourceDescriptor:N',
                                                   opacity=alt.condition(selection, alt.value(1), alt.value(0)),
-                                                  tooltip=[alt.Tooltip("date:T", format="%Y-%b-%d %I %p"), 'FuelSourceDescriptor','mwh']).properties(
+                                                  tooltip=[alt.Tooltip("date:T", format="%Y-%b-%d %I%p"), 'FuelSourceDescriptor','mwh']).properties(
                                                     width=1200,
                                                     height=400).add_selection(
                                                              selection
