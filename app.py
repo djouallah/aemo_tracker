@@ -44,6 +44,7 @@ def import_data():
     con.execute(f''' delete from scada where filename = '{i}' ''')
   return con
 ########################################################## Query the Data ########################
+con=duckdb.connect('db')
 start = time.time()
 con = import_data()
 stop = time.time()
@@ -52,7 +53,6 @@ if duration > 1 :
      st.write('total import duration: '+str(duration))
      st.write(con.sql('select count(*) as total_records from scada').df())
 max_day = st.slider('Filter days', 0, 1, 60)
-con=duckdb.connect('db')
 try :
     station_list = con.sql(''' Select distinct stationame from  station order by stationame''').df()
     DUID_Select= st.multiselect('Select Station', station_list  )
