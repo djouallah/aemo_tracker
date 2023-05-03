@@ -21,11 +21,11 @@ def import_data():
         set s3_region = 'auto';
         set s3_access_key_id = "{st.secrets["aws_access_key_id_secret"]}" ;
         set s3_secret_access_key = '{st.secrets["aws_secret_access_key_secret"] }';
-        set s3_endpoint = '{st.secrets["endpoint_url_secret"].replace("https://", "")}'  ;
+        set s3_endpoint = '{st.secrets["endpoint_url_secret"]}'  ;
         SET s3_url_style='path';
         ''')
   dt = con.sql(f''' select distinct filename from  parquet_scan('s3://aemo/aemo/scada/data/*/*.parquet',filename=1)''').df()
-  con.sql(''' CREATE TABLE IF NOT EXISTS scada(filename VARCHAR, SETTLEMENTDATE TIMESTAMP, DUID VARCHAR, mw  DOUBLE  ''')
+  con.sql(''' CREATE TABLE IF NOT EXISTS scada(filename VARCHAR, SETTLEMENTDATE TIMESTAMP, DUID VARCHAR, mw  DOUBLE ) ''')
   con.sql(""" create or replace table station as 
             Select DUID,min(Region) as Region,	min(trim(FuelSourceDescriptor)) as FuelSourceDescriptor ,
             replace(min(stationame), '''', '') as stationame, min(DispatchType) as DispatchType
