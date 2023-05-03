@@ -74,9 +74,8 @@ try :
                                                     height=400).add_selection(
                                                              selection
                                                       )
-    max= con.sql('''select strftime(max(SETTLEMENTDATE), '%A, %-d %B %Y - %I:%M:%S %p') as max from scada''').fetchone()
-    st.write(max)
-    #st.subheader("Latest Updated: " + str(max[['test']].values[0][0]))
+    max= con.sql('''select strftime(max(SETTLEMENTDATE), '%A, %-d %B %Y - %I:%M:%S %p') as max from scada''').df()
+    st.write("Latest Updated: " + str(max[['max']].values[0][0]))
 
     ############################################################# Visualisation ####################################
     #UTC is just a stupid hack, Javascript read datetime as UTC not local time :(
