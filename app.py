@@ -25,7 +25,9 @@ def import_data():
         SET s3_url_style='path';
         ''')
   dt = con.sql(f''' select distinct filename from  parquet_scan('s3://aemo/aemo/scada/data/*/*.parquet',filename=1)''').df()
-  con.sql(''' CREATE TABLE IF NOT EXISTS scada(filename VARCHAR, SETTLEMENTDATE TIMESTAMP, DUID VARCHAR, mw  DOUBLE ) ''')
+  con.sql(''' CREATE TABLE IF NOT EXISTS 
+         scada(filename VARCHAR, SETTLEMENTDATE TIMESTAMP NOT NULL, DUID VARCHAR, mw  DOUBLE , PRIMARY KEY (SETTLEMENTDATE, DUID) )
+         ''')
   con.sql(""" create or replace table station as 
             Select DUID,min(Region) as Region,	min(trim(FuelSourceDescriptor)) as FuelSourceDescriptor ,
             replace(min(stationame), '''', '') as stationame, min(DispatchType) as DispatchType
