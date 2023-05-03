@@ -51,7 +51,8 @@ stop = time.time()
 duration = round(stop-start,2)
 if duration > 1 :
      st.write('total import duration: '+str(duration))
-     st.write(con.sql('select count(*) as total_records from scada').df())
+     xx=con.sql('select count(*) as total_records from scada').df()
+     st.write('total records :' +str( xx[['total_records']].values[0][0]))
 max_day = st.slider('Filter days', 0, 1, 60)
 try :
     station_list = con.sql(''' Select distinct stationame from  station order by stationame''').df()
