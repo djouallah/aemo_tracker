@@ -44,6 +44,13 @@ def import_data():
     con.execute(f''' delete from scada where filename = '{i}' ''')
   return con
 ########################################################## Query the Data ########################
+start = time.time()
+con = import_data()
+stop = time.time()
+duration = round(stop-start,2)
+if duration > 1 :
+     st.write('total import duration: '+str(duration))
+     st.write(con.sql('select count(*) as total_records from scada').df())
 max_day = st.slider('Filter days', 0, 1, 60)
 con=duckdb.connect('db')
 try :
@@ -102,13 +109,6 @@ try :
     
     link='[for a Full experience go to Nemtracker Dashboard](https://datastudio.google.com/reporting/1Fah7mn1X9itiFAMIvCFkj_tEYXHdxAll/page/TyK1)'
     col1.markdown(link,unsafe_allow_html=True)
-    start = time.time()
-    con = import_data()
-    stop = time.time()
-    duration = round(stop-start,2)
-    if duration > 1 :
-     st.write('total import duration: '+str(duration))
-     st.write(con.sql('select count(*) as total_records from scada').df())
 except:
     st.write('first run will take time')
     con = import_data()
