@@ -11,9 +11,9 @@ st.set_page_config(
 st.title("Australian Electricity Market")
 col1, col2 = st.columns([1, 1])
 now = datetime.now(pytz.timezone('Australia/Brisbane'))
-################################## Data import from Cloudflare R2#########################
-@st.cache_resource(ttl=5*60) 
-def import_data():
+################################## start DB #########################
+@st.cache_resource(ttl=24*60*60) 
+def build_DB():
   con=duckdb.connect('db')
   con.sql(f'''
         install httpfs; LOAD httpfs; set enable_progress_bar=false;
@@ -24,16 +24,20 @@ def import_data():
         set s3_endpoint = '{st.secrets["endpoint_url_secret"]}'  ;
         SET s3_url_style='path';
         ''')
-  dt = con.sql(f''' select distinct filename from  parquet_scan('s3://aemo/aemo/scada/data/*/*.parquet',filename=1)''').df()
+  
   con.sql(''' CREATE TABLE IF NOT EXISTS 
-         scada(filename VARCHAR, SETTLEMENTDATE TIMESTAMP NOT NULL, DUID VARCHAR, mw  DOUBLE , PRIMARY KEY (SETTLEMENTDATE, DUID) )
+         scada(filename VARCHAR, SETTLEMENTDATE TIMESTAMP NOT NULL, DUID VARCHAR, mw  DOUBLE  )
          ''')
   con.sql(""" create or replace table station as 
             Select DUID,min(Region) as Region,	min(trim(FuelSourceDescriptor)) as FuelSourceDescriptor ,
             replace(min(stationame), '''', '') as stationame, min(DispatchType) as DispatchType
             from  parquet_scan('s3://aemo/aemo/duid/*.parquet' ) group by all
                           """)
-  
+  return con
+################################## Data import from Cloudflare R2#############################
+@st.cache_resource(ttl=5*60) 
+def import_data():
+  dt = con.sql(f''' select distinct filename from  parquet_scan('s3://aemo/aemo/scada/data/*/*.parquet',filename=1)''').df()
   delta=dt['filename'].to_list()
   duck=con.sql(''' select distinct filename from scada ''').df()
   duck=duck['filename'].to_list()
@@ -104,7 +108,16 @@ try :
     
     link='[for a Full experience go to Nemtracker Dashboard](https://datastudio.google.com/reporting/1Fah7mn1X9itiFAMIvCFkj_tEYXHdxAll/page/TyK1)'
     col1.markdown(link,unsafe_allow_html=True)
+    start = time.time()
+    con=build_DB()
     con = import_data()
+    stop = time.time()
+    duration = round(stop-start,2)
+    if duration > 1 :
+      st.write('total import duration: '+str(duration))
+      xx=con.sql('select count(*) as total_records from scada').df()
+      st.write('total records :' +str( xx[['total_records']].values[0][0]))
 except:
     st.write('first run will take time')
+    con=build_DB()
     con = import_data()
