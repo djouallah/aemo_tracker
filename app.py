@@ -104,14 +104,7 @@ try :
     
     link='[for a Full experience go to Nemtracker Dashboard](https://datastudio.google.com/reporting/1Fah7mn1X9itiFAMIvCFkj_tEYXHdxAll/page/TyK1)'
     col1.markdown(link,unsafe_allow_html=True)
-    start = time.time()
     con = import_data()
-    stop = time.time()
-    duration = round(stop-start,2)
-    if duration > 1 :
-      st.write('total import duration: '+str(duration))
-      xx=con.sql('select count(*) as total_records from scada').df()
-      st.write('total records :' +str( xx[['total_records']].values[0][0]))
 except:
     st.write('first run will take time')
     con = import_data()
