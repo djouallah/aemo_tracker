@@ -78,7 +78,7 @@ def import_data():
    st.dataframe(dt.get_add_actions(flatten=True).to_pandas(),use_container_width=True)
   return con
 ########################################################## Query the Data ########################
-max_day = st.slider('Filter days', 0, 7, 40)
+max_day = st.slider('Filter days', 0, 40, 7)
 con=duckdb.connect('db')
 try :
     station_list = con.sql(''' Select distinct stationame from  station order by stationame''').df()
