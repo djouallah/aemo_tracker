@@ -55,7 +55,7 @@ def import_data():
    st.write('Delta Lake file listing duration (Second): '+str(duration))
    st.write('Total Nbr of files: '+str(len(filelist)))
    total = con.execute(''' Select count(*) as total from scada ''').df()
-   st.write("Total records " + str(format(total[['total']].values[0][0]),","))
+   st.write("Total records " + str(format(total[['total']].values[0][0],",")))
   delta = [delta_path +"/" + i for i in filelist]
   duck=con.sql(''' select distinct filename from scada ''').df()
   duck=duck['filename'].to_list()
