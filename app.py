@@ -10,7 +10,8 @@ st.set_page_config(
     page_icon="✅" ,
     layout="wide"
 )
-st.title("Australian Electricity Market, Building a poor man's lakehouse :) using Delta table, Python functions and DuckDB")
+st.title("Building a poor man's lakehouse :) using Delta table, Python functions and DuckDB")
+st.write(" Source Data, Australian Energy Market Operator: AEMO")
 col1, col2 = st.columns([1, 1])
 now = datetime.now(pytz.timezone('Australia/Brisbane'))
 ################################## generate DB#########################
