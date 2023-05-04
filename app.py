@@ -134,7 +134,7 @@ try :
         mime='text/csv',
     )
     
-    link='[for a Full experience go to Nemtracker Dashboard](https://datastudio.google.com/reporting/1Fah7mn1X9itiFAMIvCFkj_tEYXHdxAll/page/TyK1)'
+    link='[About](https://datamonkeysite.com/about/)'
     col1.markdown(link,unsafe_allow_html=True)
     con = build_DB()
     con = import_data()
