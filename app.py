@@ -42,8 +42,7 @@ def import_data():
   "Region": "us-east-1",   
   "AWS_ACCESS_KEY_ID":  st.secrets["aws_access_key_id_secret"],
   "AWS_SECRET_ACCESS_KEY": st.secrets["aws_secret_access_key_secret"]   ,   
-  "AWS_ENDPOINT_URL" : st.secrets["endpoint_url_secret"] ,
-  "AWS_S3_ALLOW_UNSAFE_RENAME":"true"
+  "AWS_ENDPOINT_URL" : st.secrets["endpoint_url_secret"]
         }
   ###  dt.files() return the list of parquet files, from the delta log
   #    without an expensive directory list, that's pretty much the core idea here
