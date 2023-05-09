@@ -28,7 +28,7 @@ def build_DB():
         SET s3_url_style='path';
         ''')
   con.sql(''' CREATE TABLE IF NOT EXISTS scada(filename VARCHAR, SETTLEMENTDATE TIMESTAMP, DUID VARCHAR, mw  DOUBLE ) ''')
-  con.sql(''' CREATE view IF NOT EXISTS scada_view as select SETTLEMENTDATE, DUID, min(mw) as mw from scada group by all ''')
+  con.sql(''' CREATE or replace view scada_view as select SETTLEMENTDATE, DUID, min(mw) as mw from scada group by all ''')
   con.sql(""" create or replace table station as 
             Select DUID,min(Region) as Region,	min(trim(FuelSourceDescriptor)) as FuelSourceDescriptor ,
             replace(min(stationame), '''', '') as stationame, min(DispatchType) as DispatchType
