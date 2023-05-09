@@ -27,7 +27,7 @@ def build_DB():
         set s3_endpoint = '{st.secrets["endpoint_url_secret"].replace("https://", "")}'  ;
         SET s3_url_style='path';
         ''')
-  con.sql(''' CREATE TABLE IF NOT EXISTS scada(filename VARCHAR, SETTLEMENTDATE TIMESTAMP, DUID VARCHAR, mw  DOUBLE  ''')
+  con.sql(''' CREATE TABLE IF NOT EXISTS scada(filename VARCHAR, SETTLEMENTDATE TIMESTAMP, DUID VARCHAR, mw  DOUBLE ) ''')
   con.sql(''' CREATE view IF NOT EXISTS scada_view as select SETTLEMENTDATE, DUID, min(mw) from scada group by all ''')
   con.sql(""" create or replace table station as 
             Select DUID,min(Region) as Region,	min(trim(FuelSourceDescriptor)) as FuelSourceDescriptor ,
