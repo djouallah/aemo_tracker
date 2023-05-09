@@ -27,7 +27,8 @@ def build_DB():
         set s3_endpoint = '{st.secrets["endpoint_url_secret"].replace("https://", "")}'  ;
         SET s3_url_style='path';
         ''')
-  con.sql(''' CREATE TABLE IF NOT EXISTS scada(filename VARCHAR, SETTLEMENTDATE TIMESTAMP, DUID VARCHAR, mw  DOUBLE, PRIMARY KEY (SETTLEMENTDATE, DUID) )  ''')
+  con.sql(''' CREATE TABLE IF NOT EXISTS scada(filename VARCHAR, SETTLEMENTDATE TIMESTAMP, DUID VARCHAR, mw  DOUBLE  ''')
+  con.sql(''' CREATE view IF NOT EXISTS scada_view as select SETTLEMENTDATE, DUID, min(mw) from scada group by all ''')
   con.sql(""" create or replace table station as 
             Select DUID,min(Region) as Region,	min(trim(FuelSourceDescriptor)) as FuelSourceDescriptor ,
             replace(min(stationame), '''', '') as stationame, min(DispatchType) as DispatchType
@@ -88,9 +89,9 @@ try :
     filter =  "'"+xxxx+"'" 
     if len(DUID_Select) != 0 :
         
-        results= con.sql(f''' Select SETTLEMENTDATE,(SETTLEMENTDATE - INTERVAL 10 HOUR) as date,stationame,sum(mw) as mw from  scada
+        results= con.sql(f''' Select SETTLEMENTDATE,(SETTLEMENTDATE - INTERVAL 10 HOUR) as date,stationame,sum(mw) as mw from  scada_view
                             inner join station
-                            on scada.DUID = station.DUID
+                            on scada_view.DUID = station.DUID
                             where stationame in ({filter}) and SETTLEMENTDATE >= '{datetime.strftime(now - timedelta(days=max_day), '%Y-%m-%d')}' 
                             group by all
                             ''').df() 
@@ -101,9 +102,9 @@ try :
         
     else:
         results= con.sql(f''' Select date_trunc('hour',(SETTLEMENTDATE - INTERVAL 10 HOUR)) as date,date_trunc('hour',SETTLEMENTDATE) as SETTLEMENTDATE,
-                            FuelSourceDescriptor,sum(mw)/12 as mwh from  scada
+                            FuelSourceDescriptor,sum(mw)/12 as mwh from  scada_view
                             inner join station
-                            on scada.DUID = station.DUID
+                            on scada_view.DUID = station.DUID
                             where SETTLEMENTDATE >= '{datetime.strftime(now - timedelta(days=max_day), '%Y-%m-%d')}'
                             group by all
                             ''').df() 
