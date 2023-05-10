@@ -11,7 +11,7 @@ st.set_page_config(
     layout="wide"
 )
 st.title("Building a poor man's lakehouse :) using Delta table, Python functions and DuckDB")
-st.write(" Source Data, Australian Energy Market Operator: ") link='[AEMO](http://nemweb.com.au/Reports/Current/Dispatch_SCADA/)'
+st.write(" Source Data, Australian Energy Market Operator: link='[AEMO](http://nemweb.com.au/Reports/Current/Dispatch_SCADA/)'") 
 col1, col2 = st.columns([1, 1])
 now = datetime.now(pytz.timezone('Australia/Brisbane'))
 ################################## generate DB#########################
