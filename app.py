@@ -78,7 +78,7 @@ def import_data():
   with st.expander("Delta Lake Metadata"):
    st.dataframe(dt.get_add_actions(flatten=True).to_pandas(),use_container_width=True)
   with st.expander("DuckDB Database"):
-   st.dataframe(con.execute('PRAGMA database_size'))
+   st.dataframe(con.execute('PRAGMA database_size').df())
   return con
 ########################################################## Query the Data ########################
 max_day = st.slider('Filter days', 0, 40, 7)
