@@ -1,2 +1,3 @@
 duckdb
 deltalake
+streamlit==1.23.1
