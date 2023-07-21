@@ -81,7 +81,7 @@ def import_data():
    st.dataframe(con.execute('PRAGMA database_size').df())
   return con
 ########################################################## Query the Data ########################
-max_day = st.slider('Filter days', 0, 90, 7)
+max_day = st.slider('Filter days', 0, 120, 7)
 con=duckdb.connect('db')
 try :
     station_list = con.sql(''' Select distinct stationame from  station order by stationame''').df()
