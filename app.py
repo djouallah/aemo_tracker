@@ -10,7 +10,7 @@ st.set_page_config(
     page_icon="✅" ,
     layout="wide"
 )
-st.title("End to End Soluation using Cloudflare R2 (with Delta table), Google Python functions , DuckDB and Streamlit")
+st.title("End to End Solution using Google Python functions, Cloudflare R2 (with Delta table),  DuckDB and Streamlit")
 st.write(" Source Data, Australian Energy Market Operator: [AEMO](http://nemweb.com.au/Reports/Current/Dispatch_SCADA/) ") 
 col1, col2 = st.columns([1, 1])
 now = datetime.now(pytz.timezone('Australia/Brisbane'))
