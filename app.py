@@ -81,11 +81,11 @@ def import_data():
    st.dataframe(con.execute('PRAGMA database_size').df())
   return con
 ########################################################## Query the Data ########################
-max_day = st.selectbox('Filter days', (1, 7, 14,28,60,90,120))
+max_day = col1.selectbox('Filter days', (1, 7, 14,28,60,90,120))
 con=duckdb.connect('db')
 try :
     station_list = con.sql(''' Select distinct stationame from  station order by stationame''').df()
-    DUID_Select= st.multiselect('Select Station', station_list  )
+    DUID_Select= col2.multiselect('Select Station', station_list  )
 
     xxxx = "','".join(DUID_Select)
     filter =  "'"+xxxx+"'" 
