@@ -1,7 +1,8 @@
 # Introduction
 A very simple pipeline to display AEMO data, everything is open source and written only using Python and SQL
 
-![diagram](https://github.com/djouallah/aemo_tracker/assets/12554469/7c0d3491-8e82-4e33-bb90-4b1385d4e7c8)
+![image](https://github.com/djouallah/aemo_tracker/assets/12554469/f5382496-a42a-4d36-8e78-4cdc89991875)
+
 
 alternatively you can everything in your laptop, or just deploy it in a cloud VM, or a container I suppose.
 
