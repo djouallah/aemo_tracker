@@ -90,7 +90,7 @@ def load(request):
       xx=tb.cast(target_schema=my_schema)
       write_deltalake(delta_path, xx,mode='append',partition_by=['week'],storage_options=storage_options)
       pq.write_table(log_tb,"aemo/log/scada/log.parquet",filesystem=s3)
-      ########################## Compact and delete old Copies ##########################
+      ########################## Compact files and vacuum old files ##########################
       dt = DeltaTable(delta_path,storage_options=storage_options) 
       if len(dt.file_uris(partition_filters = [("week","=",appended_data.at[0,'week'])])) > 20 :
             dt.create_checkpoint()
