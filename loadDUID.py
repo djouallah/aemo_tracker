@@ -31,5 +31,5 @@ def loadduid(requet):
                          access_key = st.secrets["aws_access_key_id_secret"],
                          secret_key=st.secrets["aws_secret_access_key_secret"] ,
                          endpoint_override=st.secrets["endpoint_url_secret"] )
-    pq.write_table(tb,"aemo/aemo/duid/duid.parquet",filesystem=s3)
+    pq.write_table(tb,"aemo/duid/duid.parquet",filesystem=s3)
 loadduid('x')
