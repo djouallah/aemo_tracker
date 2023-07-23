@@ -32,7 +32,7 @@ def build_DB():
   con.sql(""" create or replace table station as 
             Select DUID,min(Region) as Region,	min(trim(FuelSourceDescriptor)) as FuelSourceDescriptor ,
             replace(min(stationame), '''', '') as stationame, min(DispatchType) as DispatchType
-            from  parquet_scan('s3://aemo/aemo/duid/*.parquet' ) group by all
+            from  parquet_scan('s3://aemo/duid/*.parquet' ) group by all
                           """)
   return con
 ################################## Data import from Cloudflare R2#########################
