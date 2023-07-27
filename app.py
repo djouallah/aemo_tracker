@@ -6,7 +6,7 @@ import altair as alt
 from deltalake import DeltaTable
 import time
 st.set_page_config(
-    page_title="POC Building a delta lake using Python and DuckDB",
+    page_title="Building a delta lake using Python and DuckDB",
     page_icon="✅" ,
     layout="wide"
 )
