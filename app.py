@@ -50,7 +50,7 @@ def import_data():
   start = time.time()
   dt = DeltaTable(delta_path,storage_options=storage_options)
   #filelist= dt.files()
-  filelist=  dt.file_uris(partition_filters = [("week","=","202330")]))
+  filelist=  dt.file_uris(partition_filters = [("week","=","202330")])
   stop = time.time()
   duration = round(stop-start,2)
   with st.expander("General Stats"):
