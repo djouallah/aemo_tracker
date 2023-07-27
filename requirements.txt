@@ -1,2 +1,2 @@
-duckdb
+duckdb>=0.8.2.dev2090
 deltalake
