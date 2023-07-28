@@ -49,7 +49,7 @@ def import_data():
   #    without an expensive directory list, that's pretty much the core idea here
   start = time.time()
   dt = DeltaTable(delta_path,storage_options=storage_options)
-  filelist= dt.files(partition_filters = [("week","=",appended_data.at[0,'week'])])
+  filelist= dt.files(partition_filters = [("week","=","202330")])
   stop = time.time()
   duration = round(stop-start,2)
   with st.expander("General Stats"):
