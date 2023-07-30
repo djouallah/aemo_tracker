@@ -53,11 +53,13 @@ def import_data():
   dt = DeltaTable(delta_path,storage_options=storage_options)
   cw=now.strftime('%Y%U')
   if xx == 0  :
-   filelist= dt.files(partition_filters = [("week","in",[cw])])
+   filelist= dt.files(partition_filters = [("week","=",cw)])
   else :
    cw1=(now-timedelta(days=7)).strftime('%Y%U')
    cw2=(now-timedelta(days=14)).strftime('%Y%U')
-   filelist= dt.files(partition_filters = [("week","in",[cw1,cw,cw2])])
+   cw3=(now-timedelta(days=21)).strftime('%Y%U')
+   cw4=(now-timedelta(days=21)).strftime('%Y%U')
+   filelist= dt.files(partition_filters = [("week","in",[cw4,cw3,cw2,cw1,cw])])
   stop = time.time()
   duration = round(stop-start,2)
   with st.expander("General Stats"):
@@ -88,7 +90,7 @@ def import_data():
    st.dataframe(con.execute('PRAGMA database_size').df())
   return con
 ########################################################## Query the Data ########################
-max_day = col1.selectbox('Filter days', (1, 7,14))
+max_day = col1.selectbox('Filter days', (1, 7,14,21,28))
 con=duckdb.connect('db')
 try :
     station_list = con.sql(''' Select distinct stationame from  station order by stationame''').df()
