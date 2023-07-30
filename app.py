@@ -86,7 +86,6 @@ def import_data():
    st.dataframe(dt.get_add_actions(flatten=True).to_pandas(),use_container_width=True)
   with st.expander("DuckDB Database"):
    st.dataframe(con.execute('PRAGMA database_size').df())
-  st.experimental_rerun()
   return con
 ########################################################## Query the Data ########################
 max_day = col1.selectbox('Filter days', (1, 7,14))
@@ -149,6 +148,7 @@ try :
     col1.markdown(link,unsafe_allow_html=True)
     con = build_DB()
     con = import_data()
+    st.experimental_rerun()
 except:
     st.write('first run will take time')
     con = build_DB()
