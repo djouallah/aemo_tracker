@@ -148,7 +148,6 @@ try :
     col1.markdown(link,unsafe_allow_html=True)
     con = build_DB()
     con = import_data()
-    st.experimental_rerun()
 except:
     st.write('first run will take time')
     con = build_DB()
