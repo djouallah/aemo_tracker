@@ -51,13 +51,13 @@ def import_data():
   first_run = con.sql(''' Select count(*) as total from scada ''').df()
   xx=first_run[['total']].values[0][0]
   dt = DeltaTable(delta_path,storage_options=storage_options)
-  #if xx >0  :
-  # filelist= dt.files()
-  #else :
   cw=now.strftime('%Y%U')
-  cw1=(now-timedelta(days=7)).strftime('%Y%U')
-  cw2=(now-timedelta(days=14)).strftime('%Y%U')
-  filelist= dt.files(partition_filters = [("week","in",[cw1,cw,cw2])])
+  if xx = 0  :
+   filelist= dt.files(partition_filters = [("week","in",[cw])])
+  else :
+   cw1=(now-timedelta(days=7)).strftime('%Y%U')
+   cw2=(now-timedelta(days=14)).strftime('%Y%U')
+   filelist= dt.files(partition_filters = [("week","in",[cw1,cw,cw2])])
   stop = time.time()
   duration = round(stop-start,2)
   with st.expander("General Stats"):
