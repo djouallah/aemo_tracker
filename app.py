@@ -55,7 +55,8 @@ def import_data():
   # filelist= dt.files()
   #else :
   cw=now.strftime('%Y%U')
-  filelist= dt.files(partition_filters = [("week","=",cw)])
+  cw1=(now-timedelta(days=7)).strftime('%Y%U')
+  filelist= dt.files(partition_filters = [("week","in",[cw1,cw])])
   stop = time.time()
   duration = round(stop-start,2)
   with st.expander("General Stats"):
