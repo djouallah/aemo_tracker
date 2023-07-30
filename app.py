@@ -56,7 +56,8 @@ def import_data():
   #else :
   cw=now.strftime('%Y%U')
   cw1=(now-timedelta(days=7)).strftime('%Y%U')
-  filelist= dt.files(partition_filters = [("week","in",[cw1,cw])])
+  cw2=(now-timedelta(days=14)).strftime('%Y%U')
+  filelist= dt.files(partition_filters = [("week","in",[cw1,cw,cw2])])
   stop = time.time()
   duration = round(stop-start,2)
   with st.expander("General Stats"):
@@ -87,7 +88,7 @@ def import_data():
    st.dataframe(con.execute('PRAGMA database_size').df())
   return con
 ########################################################## Query the Data ########################
-max_day = col1.selectbox('Filter days', (1, 7))
+max_day = col1.selectbox('Filter days', (1, 7,14))
 con=duckdb.connect('db')
 try :
     station_list = con.sql(''' Select distinct stationame from  station order by stationame''').df()
