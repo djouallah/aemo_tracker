@@ -85,7 +85,7 @@ def import_data():
      st.write('Reading from R2 and Inserting into DuckDB (Second): '+str(duration))
      st.write('Total Nbr of files: '+str(len(files_to_insert)))
      st.write("nbr of records inserted " + str(insert[['Count']].values[0][0]))
-  with st.expander("Delta Lake Metadata"):
+  with st.expander("Remote Storage Data"):
    st.dataframe(dt.get_add_actions(flatten=True).to_pandas(),use_container_width=True)
   with st.expander("DuckDB Database"):
    st.dataframe(con.execute('PRAGMA database_size').df())
