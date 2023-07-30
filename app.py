@@ -51,11 +51,11 @@ def import_data():
   first_run = con.sql(''' Select count(*) as total from scada ''').df()
   xx=first_run[['total']].values[0][0]
   dt = DeltaTable(delta_path,storage_options=storage_options)
-  if xx >0  :
-   filelist= dt.files()
-  else :
-   cw=now.strftime('%Y%U')
-   filelist= dt.files(partition_filters = [("week","=",cw)])
+  #if xx >0  :
+  # filelist= dt.files()
+  #else :
+  cw=now.strftime('%Y%U')
+  filelist= dt.files(partition_filters = [("week","=",cw)])
   stop = time.time()
   duration = round(stop-start,2)
   with st.expander("General Stats"):
@@ -86,7 +86,7 @@ def import_data():
    st.dataframe(con.execute('PRAGMA database_size').df())
   return con
 ########################################################## Query the Data ########################
-max_day = col1.selectbox('Filter days', (1, 7, 14,28,60,90,120))
+max_day = col1.selectbox('Filter days', (1, 7))
 con=duckdb.connect('db')
 try :
     station_list = con.sql(''' Select distinct stationame from  station order by stationame''').df()
