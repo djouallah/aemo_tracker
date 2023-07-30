@@ -59,7 +59,8 @@ def import_data():
    cw2=(now-timedelta(days=14)).strftime('%Y%U')
    cw3=(now-timedelta(days=21)).strftime('%Y%U')
    cw4=(now-timedelta(days=21)).strftime('%Y%U')
-   filelist= dt.files(partition_filters = [("week","in",[cw4,cw3,cw2,cw1,cw])])
+   cw5=(now-timedelta(days=21)).strftime('%Y%U')
+   filelist= dt.files(partition_filters = [("week","in",[cw5,cw4,cw3,cw2,cw1,cw])])
   stop = time.time()
   duration = round(stop-start,2)
   with st.expander("General Stats"):
