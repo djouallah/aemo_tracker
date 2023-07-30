@@ -1,5 +1,5 @@
 import streamlit as st
-from datetime import datetime , timedelta
+from datetime import datetime ,timedelta
 import duckdb 
 import pytz
 import altair as alt
@@ -48,16 +48,20 @@ def import_data():
   ###  dt.files() return the list of parquet files, from the delta log
   #    without an expensive directory list, that's pretty much the core idea here
   start = time.time()
+  first_run = con.sql(''' Select count(*) as total from scada ''').df()
+  xx=first_run[['total']].values[0][0]
   dt = DeltaTable(delta_path,storage_options=storage_options)
-  #filelist= dt.files(partition_filters = [("week","in",["202329","202330","202331"])])
-  filelist= dt.files()
+  if xx >0  :
+   filelist= dt.files()
+  else :
+   cw=now.strftime('%Y%U')
+   filelist= dt.files(partition_filters = [("week","=",cw)])
   stop = time.time()
   duration = round(stop-start,2)
   with st.expander("General Stats"):
    st.write('Delta Lake file listing duration (Second): '+str(duration))
    st.write('Total Nbr of files: '+str(len(filelist)))
-   total = con.execute(''' Select count(*) as total from scada ''').df()
-   st.write("Total records " + str(format(total[['total']].values[0][0],",")))
+   st.write("Total records " + str(xx))
   delta = [delta_path +"/" + i for i in filelist]
   duck=con.sql(''' select distinct filename from scada ''').df()
   duck=duck['filename'].to_list()
