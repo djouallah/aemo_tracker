@@ -121,14 +121,14 @@ try :
                             group by all
                             ''').df() 
         
-        selection = alt.selection_multi(fields=['FuelSourceDescriptor'], bind='legend')
+        selection = alt.selection_point(fields=['FuelSourceDescriptor'], bind='legend')
         c = alt.Chart(results).mark_area().encode( x=alt.X('date:T', axis=alt.Axis(title="")),
                                                    y='mwh:Q',
                                                    color='FuelSourceDescriptor:N',
                                                   opacity=alt.condition(selection, alt.value(1), alt.value(0)),
                                                   tooltip=[alt.Tooltip("date:T", format="%Y-%b-%d %I%p"), 'FuelSourceDescriptor','mwh']).properties(
                                                     width=1600,
-                                                    height=400).add_selection(
+                                                    height=400).add_params (
                                                              selection
                                                       )
     max= con.sql('''select strftime(max(SETTLEMENTDATE), '%A, %-d %B %Y - %I:%M:%S %p') as max from scada''').df()
