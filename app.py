@@ -52,7 +52,7 @@ def import_data():
   xx=first_run[['total']].values[0][0]
   dt = DeltaTable(delta_path,storage_options=storage_options)
   cw=now.strftime('%Y%U')
-  if xx = 0  :
+  if xx == 0  :
    filelist= dt.files(partition_filters = [("week","in",[cw])])
   else :
    cw1=(now-timedelta(days=7)).strftime('%Y%U')
