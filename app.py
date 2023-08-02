@@ -55,12 +55,8 @@ def import_data():
   if xx == 0  :
    filelist= dt.files(partition_filters = [("week","=",cw)])
   else :
-   cw1=(now-timedelta(days=7)).strftime('%Y%U')
-   cw2=(now-timedelta(days=14)).strftime('%Y%U')
-   cw3=(now-timedelta(days=21)).strftime('%Y%U')
-   cw4=(now-timedelta(days=28)).strftime('%Y%U')
-   cw5=(now-timedelta(days=35)).strftime('%Y%U')
-   filelist= dt.files(partition_filters = [("week","in",[cw5,cw4,cw3,cw2,cw1,cw])])
+   array_list_ls =[(now-timedelta(days=x)).strftime('%Y%U') for x in range(0, 35,7) ]
+   filelist= dt.files(partition_filters = [("week","in",array_list_ls)])
   stop = time.time()
   duration = round(stop-start,2)
   with st.expander("General Stats"):
@@ -89,6 +85,7 @@ def import_data():
    st.dataframe(dt.get_add_actions(flatten=True).to_pandas(),use_container_width=True)
   with st.expander("DuckDB Database"):
    st.dataframe(con.execute('PRAGMA database_size').df())
+  duck=con.sql(''' checkpoint''')
   return con
 ########################################################## Query the Data ########################
 max_day = col1.selectbox('Filter days', (1, 7,14,21,28))
