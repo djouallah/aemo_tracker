@@ -55,7 +55,7 @@ def import_data():
   if xx == 0  :
    filelist= dt.files(partition_filters = [("week","=",cw)])
   else :
-   array_list_ls =[(now-timedelta(days=x)).strftime('%Y%U') for x in range(0, 70,7) ]
+   array_list_ls =[(now-timedelta(days=x)).strftime('%Y%U') for x in range(0, 90,7) ]
    filelist= dt.files(partition_filters = [("week","in",array_list_ls)])
   stop = time.time()
   duration = round(stop-start,2)
@@ -88,7 +88,7 @@ def import_data():
   duck=con.sql(''' checkpoint''')
   return con
 ########################################################## Query the Data ########################
-max_day = col1.selectbox('Filter days', (1, 7,14,21,28,60))
+max_day = col1.selectbox('Filter days', (1, 7,14,21,28,60,90))
 con=duckdb.connect('db')
 try :
     station_list = con.sql(''' Select distinct stationame from  station order by stationame''').df()
