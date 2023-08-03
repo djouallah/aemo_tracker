@@ -55,7 +55,7 @@ def import_data():
   if xx == 0  :
    filelist= dt.files(partition_filters = [("week","=",cw)])
   else :
-   array_list_ls =[(now-timedelta(days=x)).strftime('%Y%U') for x in range(0, 90,7) ]
+   array_list_ls =[(now-timedelta(days=x)).strftime('%Y%U') for x in range(0, 140,7) ]
    filelist= dt.files(partition_filters = [("week","in",array_list_ls)])
   stop = time.time()
   duration = round(stop-start,2)
