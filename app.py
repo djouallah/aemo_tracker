@@ -105,9 +105,7 @@ try :
                             group by all
                             ''').df() 
         c = alt.Chart(results).mark_area().encode(x=alt.X('date:T', axis=alt.Axis(title="")), y='mw:Q',color='stationame:N',
-                                            tooltip=[alt.Tooltip("date:T", format="%Y-%b-%d %I:%M%p"), 'stationame','mw']).properties(
-                                                width=1600,
-                                                height=400)
+                                            tooltip=[alt.Tooltip("date:T", format="%Y-%b-%d %I:%M%p"), 'stationame','mw'])
         
     else:
         results= con.sql(f''' Select date_trunc('hour',(SETTLEMENTDATE - INTERVAL 10 HOUR)) as date,date_trunc('hour',SETTLEMENTDATE) as SETTLEMENTDATE,
@@ -123,9 +121,7 @@ try :
                                                    y='mwh:Q',
                                                    color='FuelSourceDescriptor:N',
                                                   opacity=alt.condition(selection, alt.value(1), alt.value(0)),
-                                                  tooltip=[alt.Tooltip("date:T", format="%Y-%b-%d %I%p"), 'FuelSourceDescriptor','mwh']).properties(
-                                                    width=1600,
-                                                    height=400).add_params (
+                                                  tooltip=[alt.Tooltip("date:T", format="%Y-%b-%d %I%p"), 'FuelSourceDescriptor','mwh']).add_params (
                                                              selection
                                                       )
     max= con.sql('''select strftime(max(SETTLEMENTDATE), '%A, %-d %B %Y - %I:%M:%S %p') as max from scada''').df()
