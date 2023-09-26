@@ -19,7 +19,7 @@ now = datetime.now(pytz.timezone('Australia/Brisbane'))
 def build_DB():
   con=duckdb.connect('db')
   con.sql(f'''
-        install httpfs; LOAD httpfs; set enable_progress_bar=false;
+        set enable_progress_bar=false;
         PRAGMA enable_object_cache; SET enable_http_metadata_cache=true ;
         set s3_region = 'auto';
         set s3_access_key_id = "{st.secrets["aws_access_key_id_secret"]}" ;
