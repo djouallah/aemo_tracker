@@ -14,7 +14,7 @@ st.title("End to End Solution using Python, Cloudflare R2 (with Delta table),  D
 st.write(" Source Data, Australian Energy Market Operator: [AEMO](http://nemweb.com.au/Reports/Current/Dispatch_SCADA/) ") 
 col1, col2 = st.columns([1, 1])
 now = datetime.now(pytz.timezone('Australia/Brisbane'))
-################################## generate DB#########################
+################################## generate DB#######################################
 @st.cache_resource(ttl=24*60*60) 
 def build_DB():
   con=duckdb.connect('db')
