@@ -88,7 +88,7 @@ def import_data():
   duck=con.sql(''' checkpoint''')
   return con
 ########################################################## Query the Data ########################
-max_day = col1.selectbox('Filter days', (1, 7,14,21,28))
+max_day = col1.selectbox('Filter days', (1, 7,14,21,28,56,140))
 con=duckdb.connect('db')
 try :
     station_list = con.sql(''' Select distinct stationame from  station order by stationame''').df()
